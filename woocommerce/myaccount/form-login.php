@@ -57,9 +57,9 @@ do_action('woocommerce_before_customer_login_form');
                                 autocomplete="current-password"
                                 required
                             />
-                            <button type="button" class="tm-form-eye" aria-label="Показать пароль" data-target="password">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </button>
+                            <!-- <button type="button" class="tm-form-eye" aria-label="Показать пароль" data-target="password">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
+                            </button> -->
                         </div>
                     </div>
 
@@ -142,9 +142,9 @@ do_action('woocommerce_before_customer_login_form');
                                 id="reg_password"
                                 autocomplete="new-password"
                             />
-                            <button type="button" class="tm-form-eye" aria-label="Показать пароль" data-target="reg_password">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </button>
+                            <!-- <button type="button" class="tm-form-eye" aria-label="Показать пароль" data-target="reg_password">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
+                            </button> -->
                         </div>
                     </div>
                     <?php else : ?>

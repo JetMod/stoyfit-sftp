@@ -15286,6 +15286,276 @@ div.wpcf7 .ajax-loader {
     text-decoration: underline;
 }
 
+/* Таблица «Мои заказы» (полный список) */
+.tm-my-account table.woocommerce-orders-table,
+.tm-my-account table.my_account_orders {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.tm-my-account table.woocommerce-orders-table thead,
+.tm-my-account table.my_account_orders thead {
+    background: #f8f8f8;
+}
+
+.tm-my-account table.woocommerce-orders-table th,
+.tm-my-account table.woocommerce-orders-table td,
+.tm-my-account table.my_account_orders th,
+.tm-my-account table.my_account_orders td {
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+}
+
+.tm-my-account table.woocommerce-orders-table th:last-child,
+.tm-my-account table.my_account_orders th:last-child,
+.tm-my-account table.woocommerce-orders-table td:last-child,
+.tm-my-account table.my_account_orders td:last-child {
+    text-align: right;
+}
+
+.tm-my-account table.woocommerce-orders-table th,
+.tm-my-account table.my_account_orders th {
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+}
+
+.tm-my-account table.woocommerce-orders-table tbody tr:last-child td,
+.tm-my-account table.my_account_orders tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tm-my-account table.woocommerce-orders-table tbody tr:hover,
+.tm-my-account table.my_account_orders tbody tr:hover {
+    background: #fafafa;
+}
+
+.tm-my-account table.woocommerce-orders-table .woocommerce-orders-table__cell-order-number a,
+.tm-my-account table.my_account_orders .order-number a {
+    font-weight: 600;
+    color: #e52835;
+    text-decoration: none;
+}
+
+.tm-my-account table.woocommerce-orders-table .woocommerce-orders-table__cell-order-number a:hover,
+.tm-my-account table.my_account_orders .order-number a:hover {
+    text-decoration: underline;
+}
+
+.tm-my-account table.woocommerce-orders-table .woocommerce-button,
+.tm-my-account table.my_account_orders .button,
+.tm-my-account table.my_account_orders .order-actions .button {
+    display: inline-block;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff !important;
+    background: #e52835 !important;
+    border: 1px solid #e52835 !important;
+    border-radius: 3px;
+    text-decoration: none !important;
+    transition: background 0.2s, border-color 0.2s;
+    white-space: nowrap;
+}
+
+.tm-my-account table.woocommerce-orders-table .woocommerce-button:hover,
+.tm-my-account table.my_account_orders .button:hover {
+    background: #c41e2a !important;
+    border-color: #c41e2a !important;
+}
+
+.tm-my-account table.woocommerce-orders-table .order-actions .button,
+.tm-my-account table.my_account_orders .order-actions .button {
+    margin: 2px 0 2px 6px;
+}
+
+.tm-my-account table.woocommerce-orders-table .order-actions .button:first-child,
+.tm-my-account table.my_account_orders .order-actions .button:first-child {
+    margin-left: 0;
+}
+
+@media (max-width: 767px) {
+    .tm-my-account table.woocommerce-orders-table,
+    .tm-my-account table.my_account_orders {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tm-my-account table.woocommerce-orders-table th,
+    .tm-my-account table.my_account_orders th,
+    .tm-my-account table.woocommerce-orders-table td,
+    .tm-my-account table.my_account_orders td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Страница «Просмотр заказа» */
+.tm-my-account .woocommerce-order-details,
+.tm-my-account .woocommerce-customer-details {
+    margin-bottom: 32px;
+}
+
+.tm-my-account .woocommerce-order-details h2,
+.tm-my-account .woocommerce-customer-details h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e52835;
+    color: #000;
+}
+
+/* Таблица товаров в заказе */
+.tm-my-account .woocommerce-order-details table.shop_table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    font-size: 14px;
+}
+
+.tm-my-account .woocommerce-order-details table.shop_table thead {
+    background: #f8f8f8;
+}
+
+.tm-my-account .woocommerce-order-details table.shop_table th,
+.tm-my-account .woocommerce-order-details table.shop_table td {
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+}
+
+.tm-my-account .woocommerce-order-details table.shop_table th.product-total,
+.tm-my-account .woocommerce-order-details table.shop_table td.product-total,
+.tm-my-account .woocommerce-order-details table.shop_table .amount {
+    text-align: right;
+}
+
+.tm-my-account .woocommerce-order-details table.shop_table th {
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+}
+
+.tm-my-account .woocommerce-order-details table.shop_table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tm-my-account .woocommerce-order-details table.shop_table .product-name a {
+    color: #e52835;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.tm-my-account .woocommerce-order-details table.shop_table .product-name a:hover {
+    text-decoration: underline;
+}
+
+/* Итоги заказа (подытог, метод оплаты, всего) */
+.tm-my-account .woocommerce-order-details .order-again {
+    margin-top: 16px;
+}
+
+.tm-my-account .woocommerce-order-details .shop_table.order_details ~ .shop_table,
+.tm-my-account .woocommerce-order-details table.totals,
+.tm-my-account .woocommerce-order-details .cart-subtotal,
+.tm-my-account .woocommerce-order-details .order-total {
+    margin-top: 16px;
+}
+
+.tm-my-account .woocommerce-order-details .shop_table.totals,
+.tm-my-account .woocommerce-order-details table.totals {
+    width: auto;
+    min-width: 280px;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.tm-my-account .woocommerce-order-details .shop_table.totals th,
+.tm-my-account .woocommerce-order-details .shop_table.totals td,
+.tm-my-account .woocommerce-order-details table.totals th,
+.tm-my-account .woocommerce-order-details table.totals td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.tm-my-account .woocommerce-order-details .shop_table.totals tr:last-child th,
+.tm-my-account .woocommerce-order-details .shop_table.totals tr:last-child td,
+.tm-my-account .woocommerce-order-details table.totals tr:last-child th,
+.tm-my-account .woocommerce-order-details table.totals tr:last-child td {
+    border-bottom: none;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.tm-my-account .woocommerce-order-details .order-total .amount,
+.tm-my-account .woocommerce-order-details .shop_table.totals .order-total .amount {
+    color: #e52835;
+}
+
+/* Блоки адресов (Платёжный адрес, Адрес доставки) */
+.tm-my-account .woocommerce-customer-details .woocommerce-column {
+    margin-bottom: 24px;
+}
+
+.tm-my-account .woocommerce-customer-details address {
+    font-style: normal;
+    line-height: 1.6;
+    color: #444;
+    padding: 16px;
+    background: #f8f8f8;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+}
+
+.tm-my-account .woocommerce-customer-details address p {
+    margin: 0 0 4px;
+}
+
+.tm-my-account .woocommerce-customer-details address p:last-child {
+    margin-bottom: 0;
+}
+
+/* Сообщение со статусом заказа вверху страницы */
+.tm-my-account .woocommerce-MyAccount-content > p:first-of-type {
+    margin-bottom: 24px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #444;
+}
+
+@media (max-width: 767px) {
+    .tm-my-account .woocommerce-order-details table.shop_table,
+    .tm-my-account .woocommerce-order-details table.totals {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tm-my-account .woocommerce-order-details table.shop_table th,
+    .tm-my-account .woocommerce-order-details table.shop_table td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
 /* ==========================================================================
    Страница входа и регистрации
    ========================================================================== */
@@ -15361,24 +15631,34 @@ div.wpcf7 .ajax-loader {
 
 .tm-form-input-wrap {
     position: relative;
+    isolation: isolate;
+}
+
+/* Скрыть встроенную кнопку браузера, чтобы не было двух кликабельных иконок */
+.tm-form-input-wrap input[type="password"]::-ms-reveal {
+    display: none !important;
 }
 
 .tm-form-input-wrap .tm-form-input {
     padding-right: 44px;
 }
 
+/* Кнопка на всю правую зону — перехватывает клики, скрывает нативный контрол под собой */
 .tm-form-eye {
     position: absolute;
-    top: 50%;
-    right: 12px;
-    transform: translateY(-50%);
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
     cursor: pointer;
     color: #aaa;
     padding: 0;
-    display: flex;
-    align-items: center;
+    z-index: 2;
     transition: color 0.2s;
 }
 
@@ -15489,6 +15769,88 @@ div.wpcf7 .ajax-loader {
 .tm-my-account .woocommerce-message { background: #e8f5e9; border-left: 4px solid #2e7d32; color: #2e7d32; }
 .tm-my-account .woocommerce-error   { background: #ffebee; border-left: 4px solid #c62828; color: #c62828; }
 .tm-my-account .woocommerce-info    { background: #e3f2fd; border-left: 4px solid #1565c0; color: #1565c0; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Форма «Данные аккаунта»
+   ========================================================================== */
+
+.tm-edit-account-box {
+    background: #f8f8f8;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    padding: 32px;
+}
+
+.tm-edit-account-form .tm-form-row {
+    margin-bottom: 20px;
+}
+
+.tm-edit-account__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.tm-edit-account-form .tm-form-row--half {
+    margin-bottom: 0;
+}
+
+.tm-edit-account-form .tm-form-hint {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.4;
+}
+
+.tm-form-hint-inline {
+    font-weight: 400;
+    font-size: 12px;
+    color: #888;
+}
+
+.tm-edit-account__fieldset {
+    margin: 28px 0 0;
+    padding: 24px 0 0;
+    border: none;
+    border-top: 1px solid #e0e0e0;
+}
+
+.tm-edit-account__legend {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px;
+    padding: 0;
+    float: none;
+}
+
+.tm-edit-account-form .tm-form-row--submit {
+    margin-top: 28px;
+    margin-bottom: 0;
+}
+
+.tm-edit-account-form .tm-btn--primary {
+    min-width: 200px;
+}
+
+@media (max-width: 767px) {
+    .tm-edit-account-box {
+        padding: 20px;
+    }
+
+    .tm-edit-account__row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .tm-edit-account-form .tm-form-row--half {
+        margin-bottom: 20px;
+    }
+
+    .tm-edit-account-form .tm-form-row--half:last-child {
+        margin-bottom: 0;
+    }
+}
 
 /* Мобильная адаптация аккаунта */
 @media (max-width: 767px) {
@@ -18408,6 +18770,142 @@ div.wpcf7 .ajax-loader {
     color: #000;
     font-size: 16px;
     margin-top: 4px;
+}
+
+/* Информация о заказе на странице подтверждения (Thank You) */
+.woocommerce-order .woocommerce-order-details,
+.woocommerce-order .woocommerce-customer-details {
+    margin: 32px 0;
+    text-align: left;
+}
+
+.woocommerce-order .woocommerce-order-details h2,
+.woocommerce-order .woocommerce-customer-details h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e52835;
+    color: #000;
+}
+
+.woocommerce-order .woocommerce-order-details table.shop_table {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 24px;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    font-size: 14px;
+}
+
+.woocommerce-order .woocommerce-order-details table.shop_table thead {
+    background: #f8f8f8;
+}
+
+.woocommerce-order .woocommerce-order-details table.shop_table th,
+.woocommerce-order .woocommerce-order-details table.shop_table td {
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+}
+
+.woocommerce-order .woocommerce-order-details table.shop_table th.product-total,
+.woocommerce-order .woocommerce-order-details table.shop_table td.product-total,
+.woocommerce-order .woocommerce-order-details table.shop_table .amount {
+    text-align: right;
+}
+
+.woocommerce-order .woocommerce-order-details table.shop_table th {
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+}
+
+.woocommerce-order .woocommerce-order-details table.shop_table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.woocommerce-order .woocommerce-order-details table.shop_table .product-name,
+.woocommerce-order .woocommerce-order-details table.shop_table .product-name a {
+    color: #333;
+    font-weight: 500;
+}
+
+.woocommerce-order .woocommerce-order-details table.shop_table .product-name a:hover {
+    color: #e52835;
+}
+
+/* Итоговая таблица (подытог, метод оплаты, всего) */
+.woocommerce-order .woocommerce-order-details .shop_table.totals,
+.woocommerce-order .woocommerce-order-details table.totals {
+    width: 100%;
+    max-width: 400px;
+    margin: 24px auto;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.woocommerce-order .woocommerce-order-details .shop_table.totals th,
+.woocommerce-order .woocommerce-order-details .shop_table.totals td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.woocommerce-order .woocommerce-order-details .shop_table.totals tr:last-child th,
+.woocommerce-order .woocommerce-order-details .shop_table.totals tr:last-child td {
+    border-bottom: none;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.woocommerce-order .woocommerce-order-details .order-total .amount {
+    color: #e52835;
+}
+
+/* Адреса на странице подтверждения */
+.woocommerce-order .woocommerce-customer-details address {
+    font-style: normal;
+    line-height: 1.6;
+    color: #444;
+    padding: 16px;
+    max-width: 400px;
+    margin: 0 auto;
+    background: #f8f8f8;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+}
+
+.woocommerce-order .woocommerce-customer-details address p {
+    margin: 0 0 4px;
+}
+
+.woocommerce-order .woocommerce-customer-details address p:last-child {
+    margin-bottom: 0;
+}
+
+/* Контейнер: убираем text-align: center для деталей заказа */
+.woocommerce-order > .woocommerce-order-details,
+.woocommerce-order > .woocommerce-customer-details {
+    text-align: left;
+}
+
+@media (max-width: 767px) {
+    .woocommerce-order .woocommerce-order-details table.shop_table,
+    .woocommerce-order .woocommerce-order-details .shop_table.totals {
+        font-size: 13px;
+    }
+
+    .woocommerce-order .woocommerce-order-details table.shop_table th,
+    .woocommerce-order .woocommerce-order-details table.shop_table td {
+        padding: 10px 12px;
+    }
 }
 
 /* ── Мобильная адаптация чекаута ──────────────────────────────────────── */

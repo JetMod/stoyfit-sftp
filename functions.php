@@ -437,6 +437,9 @@ add_filter('woocommerce_endpoint_edit-address_title', function() { return 'Ад�
 add_filter('woocommerce_endpoint_edit-account_title', function() { return 'Данные аккаунта'; });
 add_filter('woocommerce_endpoint_customer-logout_title', function() { return 'Выйти'; });
 
+// Регистрация: показывать поле пароля, чтобы пользователь задал его сам (а не по email)
+add_filter('option_woocommerce_registration_generate_password', function() { return 'no'; });
+
 // AJAX-фрагменты для счётчика и мини-корзины в шапке
 add_filter('woocommerce_add_to_cart_fragments', 'tm_cart_fragments');
 function tm_cart_fragments($fragments)
