@@ -1,0 +1,107 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Base
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@base-body-background:                          @global-background;
+@base-body-font-family:                         @global-font-family;
+@base-body-font-weight:							@global-font-weight;
+@base-body-font-style:                          italic;
+@base-body-font-size:							@global-font-size;
+@base-body-line-height:                         @global-line-height;
+@base-body-color:                               @global-color;
+
+@base-link-color:                               @global-link-color;
+@base-link-hover-color:                         @global-link-hover-color;
+@base-link-hover-text-decoration:               none;
+
+@base-heading-font-family:                      @global-title-font-family;
+@base-heading-color:                            @global-title-color;
+
+@base-h2-font-size:                             20px;
+@base-h2-line-height:                           30px;
+
+@base-hr-border:                                @global-border;
+
+@base-blockquote-padding-left:                  0;
+@base-blockquote-border:                        transparent;
+@base-blockquote-border-width:                  0;
+@base-blockquote-font-size:                     22px;
+@base-blockquote-line-height:                   32px;
+
+//
+// New
+//
+
+@base-blockquote-font-family:                   @global-title-font-family;
+@base-heading-small-font-family:                @global-font-family;
+@base-strong-font-weight:                       bold;
+
+@base-medium-h2-font-size:                      (@base-h2-font-size + 4px);
+@base-medium-h2-line-height:                    (@base-h2-line-height + 4px);
+
+// Body
+// ========================================================================
+
+.hook-base-body() { font-style: @base-body-font-style; }
+
+
+// Text-level semantics
+// ========================================================================
+
+.hook-base-code() {}
+
+
+// Headings
+// ========================================================================
+
+.hook-base-h1() { font-family: @base-heading-font-family; }
+
+.hook-base-h2() { font-family: @base-heading-font-family; }
+
+.hook-base-h3() { font-family: @base-heading-small-font-family; }
+
+.hook-base-h4() { font-family: @base-heading-small-font-family; }
+
+.hook-base-h5() { font-family: @base-heading-small-font-family; }
+
+.hook-base-h6() { font-family: @base-heading-small-font-family; }
+
+
+// Preformatted text
+// ========================================================================
+
+.hook-base-pre() {}
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-base-misc() {
+
+    blockquote {
+        text-align: center;
+        font-family: @base-blockquote-font-family;
+    }
+
+    small { font-size: 60%; }
+
+    strong { font-weight: @base-strong-font-weight; }
+
+    // Tablet and bigger
+    @media (min-width: @breakpoint-medium) {
+
+        h2, .uk-h2 {
+            font-size: @base-medium-h2-font-size;
+            line-height: @base-medium-h2-line-height;
+        }
+
+    }
+
+}

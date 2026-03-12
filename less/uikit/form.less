@@ -1,0 +1,96 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Form
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@form-height: 									40px;
+@form-color:                                    @global-color;
+@form-border:                                   @global-muted-color;
+@form-background:                               transparent;
+
+@form-focus-color:								@global-default-color;
+@form-focus-border: 							@global-secondary-color;
+@form-focus-background: 						transparent;
+
+@form-disabled-border:                          @global-disabled-color;
+@form-disabled-color:                           @global-disabled-color;
+@form-disabled-background:                      transparent;
+
+@form-placeholder-color:                        @global-color;
+
+@form-legend-border:							@global-muted-color;
+@form-legend-border-width:                      2px;
+
+@form-small-height: 							30px;
+
+@form-danger-border:                            @global-danger-background;
+@form-danger-color:                             @global-danger-background;
+@form-danger-background:                        transparent;
+
+@form-success-border:                           @global-success-background;
+@form-success-color:                            @global-success-background;
+@form-success-background:                       transparent;
+
+
+// Component
+// ========================================================================
+
+.hook-form() { border-width: 0 0 @form-border-width 0; }
+
+// Focus state
+.hook-form-focus() {}
+
+// Disabled state
+.hook-form-disabled() {}
+
+// Legend
+.hook-form-legend() {}
+
+
+// Validation states
+// ========================================================================
+
+//
+// Error state
+//
+
+.hook-form-danger() {}
+
+//
+// Success state
+//
+
+.hook-form-success() {}
+
+
+// Style modifiers
+// ========================================================================
+
+.hook-form-blank() {}
+
+.hook-form-blank-focus() {}
+
+
+// Sub-object: `uk-form-label`
+// ========================================================================
+
+.hook-form-stacked-label() {}
+
+.hook-form-horizontal-label() {}
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-form-misc() {
+
+	.uk-form textarea,
+	.uk-form select { border-width: @form-border-width; }
+
+}

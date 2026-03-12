@@ -1,0 +1,37 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+// Additional style fixes
+// ========================================================================
+
+.woocommerce,
+.woocommerce-page {
+
+    .woocommerce-message,
+    .woocommerce-error {
+
+        a:not(.button) {
+            color: @global-contrast-color;
+            text-decoration: underline;
+        }
+
+        .button {
+            color: @global-contrast-color;
+            border-color: @global-contrast-color;
+        }
+
+        .button:hover,
+        .button:active, {
+            color: @global-contrast-color;
+            border-color: @global-contrast-color;
+        }
+
+    }
+
+    .quantity input,
+    .quantity input.qty,
+    #content .quantity input.qty,
+    table.cart td.actions .coupon .input-text { border-width: 1px; }
+
+    table.cart td.actions .coupon .input-text { height: @global-height + (@button-border-width * 2); }
+
+}

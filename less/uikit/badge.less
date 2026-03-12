@@ -1,0 +1,67 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Badge
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@badge-padding-horizontal:                      18px;
+@badge-background:                              @global-primary-background;
+@badge-font-size:                               15px;
+@badge-line-height:                             25px;
+@badge-color:                                   @global-contrast-color;
+@badge-font-weight:                             300;
+
+@badge-success-background:                      @global-success-background;
+@badge-warning-background:                      @global-warning-background;
+@badge-danger-background:                       @global-danger-background;
+
+//
+// New
+//
+
+@badge-padding-vertical:                        6px;
+@badge-padding-notification-vertical: 			2px;
+@badge-padding-notification-horizontal: 		(@badge-padding-notification-vertical + 6px);
+
+
+// Component
+// ========================================================================
+
+.hook-badge() { padding: @badge-padding-vertical @badge-padding-horizontal; }
+
+
+// Color modifier
+// ========================================================================
+
+//
+// Modifier: `badge-success`
+//
+
+.hook-badge-success() {}
+
+//
+// Modifier: `badge-warning`
+//
+
+.hook-badge-warning() {}
+
+//
+// Modifier: `badge-danger`
+//
+
+.hook-badge-danger() {}
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-badge-misc() {
+
+	.uk-badge-notification { padding: @badge-padding-notification-vertical @badge-padding-notification-horizontal; }
+
+}

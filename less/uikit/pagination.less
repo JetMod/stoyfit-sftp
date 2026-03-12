@@ -1,0 +1,88 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Pagination
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+
+@pagination-font-size: 							15px;
+@pagination-padding-vertical:                   8px;
+@pagination-padding-horizontal:                 11px;
+@pagination-background: 						@global-muted-background;
+@pagination-color:                              @global-nav-color;
+@pagination-hover-background:                   @global-muted-background;
+@pagination-hover-color:						@global-primary-color;
+@pagination-onclick-background: 				@global-primary-background;
+@pagination-onclick-color:                      @global-contrast-color;
+
+@pagination-active-background:                  @global-primary-background;
+@pagination-active-color:                       @global-contrast-color;
+
+@pagination-disabled-background:                @global-disabled-background;
+@pagination-disabled-color:                     @global-disabled-color;
+
+//
+// New
+//
+
+@pagination-item-border-radius: 				500px;
+
+@uk-pagination-previous-next-background:		transparent;
+@uk-pagination-previous-next-background-hover: 	transparent;
+@uk-pagination-previous-next-background-active: transparent;
+@uk-pagination-previous-next-background-focus: 	transparent;
+
+@uk-pagination-previous-next-color: 			@global-default-color;
+
+
+// Component
+// ========================================================================
+
+//
+// Items
+//
+
+.hook-pagination-item() { border-radius: @pagination-item-border-radius; }
+
+// Link
+.hook-pagination-link() {}
+
+.hook-pagination-link-hover() {}
+
+.hook-pagination-link-active() {}
+
+// Active
+.hook-pagination-active() {}
+
+// Disabled
+.hook-pagination-disabled() {}
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-pagination-misc() {
+
+	.uk-pagination {
+
+		.uk-pagination-previous a,
+		.uk-pagination-next a {
+
+			background: @uk-pagination-previous-next-background;
+
+			&:hover { background: @uk-pagination-previous-next-background-hover; }
+			&:active { background: @uk-pagination-previous-next-background-active; }
+			&:focus { background: @uk-pagination-previous-next-background-focus; }
+
+			&:active { color: @uk-pagination-previous-next-color; }
+
+		}
+
+	}
+
+}

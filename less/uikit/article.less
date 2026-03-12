@@ -1,0 +1,64 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Article
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@article-meta-font-size: 						15px;
+@article-meta-line-height:						26px;
+@article-meta-color:							@global-muted-color;
+
+@article-lead-color:                            @global-default-color;
+@article-lead-font-size:                        24px;
+@article-lead-line-height:                      36px;
+@article-lead-font-weight:                      @global-font-weight;
+
+@article-divider-border:						@global-border;
+
+@article-margin-top:                            @global-grid-gutter-large;
+
+//
+// New
+//
+
+@article-meta-font-weight:                      normal;
+@article-subnav-line-border-color:              @global-color;
+
+
+// Sub-object `uk-article-title`
+// ========================================================================
+
+.hook-article-title() {}
+
+
+// Sub-object `uk-article-meta`
+// ========================================================================
+
+.hook-article-meta() { font-weight: @article-meta-font-weight; }
+
+
+// Sub-object `uk-article-lead`
+// ========================================================================
+
+.hook-article-lead() {}
+
+
+// Sub-object `uk-article-divider`
+// ========================================================================
+
+.hook-article-divider() {}
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-article-misc() {
+
+    .uk-article .uk-subnav-line > :nth-child(n+2):before { border-color: @article-subnav-line-border-color; }
+
+}

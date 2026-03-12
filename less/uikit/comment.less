@@ -1,0 +1,78 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Comment
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@comment-title-font-size:						17px;
+@comment-meta-color:							@global-muted-color;
+
+@comment-meta-font-size:						15px;
+@comment-meta-line-height:                      28px;
+@comment-header-margin-bottom: 					@global-margin-small;
+
+//
+// New
+//
+
+@comment-background:							#fff;
+@comment-primary-shadow: 						rgba(0, 0, 0, 0.1);
+
+
+// Component
+// ========================================================================
+
+.hook-comment() {
+	padding: @global-margin;
+	background: @comment-background;
+}
+
+
+// Sub-object `uk-comment-header`
+// ========================================================================
+
+.hook-comment-header() {
+	border-bottom: 1px solid @global-border;
+	padding-bottom: @global-margin-small;
+}
+
+
+// Sub-object `uk-comment-avatar`
+// ========================================================================
+
+.hook-comment-avatar() { border-radius: 50%; }
+
+
+// Sub-object `uk-comment-title`
+// ========================================================================
+
+.hook-comment-title() {}
+
+
+// Sub-object `uk-comment-meta`
+// ========================================================================
+
+.hook-comment-meta() {}
+
+
+// Sub-object `uk-comment-body`
+// ========================================================================
+
+.hook-comment-body() {}
+
+
+// Sub-object `uk-comment-primary`
+// ========================================================================
+
+.hook-comment-primary() { box-shadow: 0 3px 10px @comment-primary-shadow; }
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-comment-misc() {}

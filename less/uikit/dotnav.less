@@ -1,0 +1,60 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Dotnav
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@dotnav-width:                                  10px;
+
+@dotnav-background:                             transparent;
+@dotnav-hover-background:                       transparent;
+@dotnav-onclick-background:                     transparent;
+@dotnav-active-background:                      @global-secondary-color;
+
+@dotnav-contrast-background:                    transparent;
+@dotnav-contrast-hover-background:              transparent;
+@dotnav-contrast-onclick-background:            transparent;
+@dotnav-contrast-active-background:             @global-contrast-color;
+
+//
+// New
+//
+
+@dotnav-border:                                 @global-muted-color;
+@dotnav-hover-border:                           @global-primary-color;
+@dotnav-active-border:                          @global-secondary-color;
+
+@dotnav-contrast-border:                        fade(@global-contrast-color, 50%);
+@dotnav-contrast-hover-border:                  @global-contrast-color;
+@dotnav-contrast-active-border:                 @global-contrast-color;
+
+
+// Component
+// ========================================================================
+
+.hook-dotnav-item() { border: 2px solid @dotnav-border; }
+
+.hook-dotnav-item-hover() { border-color: @dotnav-hover-border; }
+
+.hook-dotnav-item-onclick() { border-color: @dotnav-active-border; }
+
+.hook-dotnav-item-active() { border-color: @dotnav-active-border; }
+
+.hook-dotnav-contrast-item() { border-color: @dotnav-contrast-border; }
+
+.hook-dotnav-contrast-item-hover() { border-color: @dotnav-contrast-hover-border; }
+
+.hook-dotnav-contrast-item-onclick() { border-color: @dotnav-contrast-active-border;}
+
+.hook-dotnav-contrast-item-active() { border-color: @dotnav-contrast-active-border; }
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-dotnav-misc() {}

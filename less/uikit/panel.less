@@ -1,0 +1,147 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Panel
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@panel-title-font-weight:                       bold;
+@panel-title-color:								@global-title-color;
+
+@panel-box-padding:								@global-margin;
+
+@panel-box-background:                          #fff;
+@panel-box-title-color:                         @global-title-color;
+@panel-box-color:                               @global-color;
+@panel-box-badge-top:                           0;
+@panel-box-badge-right:                         @panel-box-badge-top;
+
+@panel-box-hover-color:                         @global-default-color;
+
+@panel-box-primary-background:                  #2a2a2a;
+@panel-box-primary-color:                       @global-contrast-color;
+@panel-box-primary-title-color:                 @global-contrast-color;
+
+@panel-box-primary-hover-color:                 fade(@panel-box-primary-color, 80%);
+
+@panel-box-secondary-background:                #fafafa;
+@panel-box-secondary-color:                     @global-color;
+@panel-box-secondary-title-color:               @global-title-color;
+
+@panel-box-secondary-hover-color:               @global-default-color;
+
+@panel-hover-padding:							@panel-box-padding;
+@panel-hover-color:                             @global-color;
+@panel-hover-hover-background:                  @global-muted-background;
+@panel-hover-hover-color:                       @global-default-color;
+
+@panel-space-padding:                           @global-margin;
+
+@panel-header-title-border:						@global-border;
+
+@panel-divider-gutter:                          @global-grid-gutter;
+@panel-divider-gutter-large:                    @global-grid-gutter-large;
+@panel-divider-border:                          @global-border;
+
+//
+// New
+//
+
+@panel-title-font-family:                       @global-font-family;
+
+@panel-box-primary-button-color:				@global-contrast-color;
+@panel-box-primary-button-border-color: 		@global-contrast-color;
+@panel-box-primary-button-hover-color:          @global-contrast-color;
+
+@panel-box-primary-link:                        @global-primary-color;
+@panel-box-primary-link-hover-color: 			fade(@panel-box-primary-link, 70%);
+
+
+// Sub-object: `uk-panel-title`
+// ========================================================================
+
+.hook-panel-title() { font-family: @panel-title-font-family; }
+
+
+// Sub-object: `uk-panel-badge`
+// ========================================================================
+
+.hook-panel-badge() {}
+
+
+// Modifier: `uk-panel-box`
+// ========================================================================
+
+.hook-panel-box() {}
+
+.hook-panel-box-hover() {}
+
+//
+// Sub-modifier: `uk-panel-box-primary`
+//
+
+.hook-panel-box-primary() {
+
+	h1,h2, h3, h4, h5, h6,
+    .uk-article-lead { color: @panel-box-primary-title-color; }
+
+    a:not(.uk-button),
+    .uk-list a { color: @panel-box-primary-link; }
+
+    a:not(.uk-button):hover,
+    .uk-list a:hover { color: @panel-box-primary-link-hover-color; }
+
+    .uk-button:not(.uk-button-primary) {
+    	color: @panel-box-primary-button-color;
+    	border-color: @panel-box-primary-button-border-color;
+    }
+
+    .uk-button:hover:not(.uk-button-primary) {
+        color: fade(@panel-box-primary-button-color, 70%);
+        border-color: fade(@panel-box-primary-button-color, 70%);
+    }
+
+}
+
+.hook-panel-box-primary-hover() {}
+
+//
+// Sub-modifier: `uk-panel-box-secondary`
+//
+
+.hook-panel-box-secondary() {}
+
+.hook-panel-box-secondary-hover() {}
+
+
+// Modifier: `uk-panel-hover`
+// ========================================================================
+
+.hook-panel-hover() {}
+
+.hook-panel-hover-hover() {}
+
+
+// Modifier: `uk-panel-header`
+// ========================================================================
+
+.hook-panel-header() {}
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-panel-misc() {
+
+	.uk-panel-badge + * { margin-top: @global-margin; }
+
+    .uk-panel-space .uk-panel-badge {
+        top: 0;
+        right: 0;
+    }
+
+}

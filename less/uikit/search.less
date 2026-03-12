@@ -1,0 +1,109 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Search
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@search-height:                                 @search-field-font-size + 20px;
+@search-width:                                  @search-padding-icon-width;
+@search-placeholder-color:                      @global-muted-color;
+
+@search-padding: 								@search-padding-icon-width;
+
+@search-icon:                                   "";
+
+@dropdown-search-background:                    @global-dropdown-background;
+@dropdown-search-color:                         @global-nav-color;
+
+@nav-search-active-background:                  @global-primary-background;
+
+@dropdown-search-margin-top:                    25px;
+
+//
+// New
+//
+
+@search-padding-icon-width:                    40px;
+@search-field-font-size:                       20px;
+@search-font-family:                           @global-title-font-family;
+
+
+// Component
+// ========================================================================
+
+.hook-search() { font-family: @search-font-family; }
+
+.hook-search-icon() {
+    height: @search-padding-icon-width;
+    background-image: url("@{global-image-path}/@{global-style}/icon-search.svg");
+    background-repeat: no-repeat;
+}
+
+
+// Sub-object `uk-search-field`
+// ========================================================================
+
+.hook-search-field() {
+	position: relative;
+    z-index: 1;
+    cursor: pointer;
+	font-size: @search-field-font-size;
+}
+
+.hook-search-field-focus() {}
+
+
+// Dropdown modifier: `uk-dropdown-search`
+// ========================================================================
+
+.hook-dropdown-search() {}
+
+
+// Nav modifier `uk-nav-search`
+// ========================================================================
+
+//
+// Items
+//
+
+.hook-nav-search() {}
+
+// Active
+.hook-nav-search-active() {}
+
+//
+// Sub-object: `uk-nav-header`
+//
+
+.hook-nav-search-header() {}
+
+//
+// Sub-object: `uk-nav-divider`
+//
+
+.hook-nav-search-divider() {}
+
+
+// Search in offcanvas
+// ========================================================================
+
+.hook-offcanvas-search-field() {}
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-search-misc() {
+
+	// Sub-object `uk-search-field`
+    // ========================================================================
+
+    .uk-search-field:focus,
+    .uk-active > .uk-search-field { cursor: text; }
+
+}

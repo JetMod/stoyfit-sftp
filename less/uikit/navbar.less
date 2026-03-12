@@ -1,0 +1,102 @@
+// Copyright (C) YOOtheme GmbH, YOOtheme Proprietary Use License (http://www.yootheme.com/license) */
+
+//
+// Component: Navbar
+//
+// ========================================================================
+
+
+// Variables
+// ========================================================================
+
+@navbar-background:                             #fff;
+@navbar-color:                                  @global-color;
+
+@navbar-link-color:                             @global-primary-color;
+@navbar-link-hover-color:                       @global-secondary-color;
+
+@navbar-nav-height:                             70px;
+@navbar-nav-padding-horizontal:                 25px;
+@navbar-nav-color:                              @global-nav-color;
+@navbar-nav-font-size:                          17px;
+@navbar-nav-font-weight:                        300;
+@navbar-nav-font-family:                        @global-font-family;
+@navbar-nav-hover-background:                   @global-dropdown-background;
+@navbar-nav-hover-color:                        @global-primary-color;
+@navbar-nav-onclick-background:                 @global-dropdown-background;
+@navbar-nav-onclick-color:                      @global-default-color;
+@navbar-nav-active-background:                  @global-dropdown-background;
+@navbar-nav-active-color:                       @global-primary-color;
+@navbar-nav-subtitle-font-size:                 13px;
+
+@navbar-brand-color:                            @global-default-color;
+@navbar-brand-hover-color:                      @global-default-color;
+
+@navbar-toggle-icon:                            "";
+@navbar-toggle-color:                           @global-contrast-color;
+@navbar-toggle-hover-color:                     @navbar-color;
+
+//
+// New
+//
+
+@navbar-nav-font-style:							normal;
+@navbar-nav-text-transform:                     none;
+@navbar-form-placeholder-color:                 @navbar-color;
+@navbar-form-color:                             @navbar-color;
+@navbar-form-focus-color:                       @navbar-color;
+
+@uk-navbar-toggle-height:                       50px;
+
+
+// Component
+// ========================================================================
+
+.hook-navbar() {}
+
+
+// Sub-object: `uk-navbar-nav`
+// ========================================================================
+
+.hook-navbar-nav() {
+    font-style: @navbar-nav-font-style;
+    text-transform: @navbar-nav-text-transform;
+}
+
+// Hover
+.hook-navbar-nav-hover() {
+    -webkit-transition: background-color .25s, color .25s;
+    transition: background-color .25s, color .25s;
+}
+
+// OnClick
+.hook-navbar-nav-onclick() {}
+
+// Active
+.hook-navbar-nav-active() {}
+
+
+// Sub-object: `uk-navbar-content`
+// ========================================================================
+
+.hook-navbar-content() { font-style: @navbar-nav-font-style; }
+
+
+// Miscellaneous
+// ========================================================================
+
+.hook-navbar-misc() {
+
+    .uk-navbar .uk-form :-ms-input-placeholder { color: @navbar-form-placeholder-color; }
+    .uk-navbar .uk-form ::-moz-placeholder { color: @navbar-form-placeholder-color; }
+    .uk-navbar .uk-form ::-webkit-input-placeholder { color: @navbar-form-placeholder-color; }
+
+    .uk-navbar .uk-form input[type="text"] { color: @navbar-form-color; }
+    .uk-navbar .uk-form input[type="text"]:focus { color: @navbar-form-focus-color; }
+
+    .uk-navbar-toggle {
+        height: @uk-navbar-toggle-height;
+        background: url("@{global-image-path}/@{global-style}/icon-toggler.svg") no-repeat 50%;
+    }
+
+}
