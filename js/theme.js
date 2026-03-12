@@ -246,26 +246,60 @@ jQuery(function ($) {
                 });
             }
 
-            // ── Перехват ссылок и форм внутри фильтра ────────────────────────
-            // Ссылки (фильтр-таксономии, сброс)
-            $(document).on('click', '.tm-filter a, .tm-filter-reset a', function (e) {
+            // ── Встроенный фильтр: чекбоксы атрибутов ───────────────────────
+            $(document).on('change', '.tm-pf-checkbox', function () {
+                var url = $(this).data('url');
+                if (url) {
+                    loadFilteredProducts(url);
+                }
+            });
+
+            // ── Встроенный фильтр: форма цены ────────────────────────────────
+            $(document).on('submit', '#tm-filter-form', function (e) {
+                e.preventDefault();
+                var $form   = $(this);
+                var action  = $form.attr('action') || window.location.pathname;
+                var minVal  = $('#tm-price-min-n').val();
+                var maxVal  = $('#tm-price-max-n').val();
+
+                // Берём текущие параметры URL (атрибуты, сортировка)
+                var params = new URLSearchParams(window.location.search);
+
+                // Обновляем/добавляем цену
+                if (minVal) { params.set('min_price', minVal); }
+                if (maxVal) { params.set('max_price', maxVal); }
+
+                // Убираем пагинацию
+                params.delete('paged');
+
+                // Применяем hidden inputs из формы (сохранённые атрибуты)
+                $form.find('input.tm-pf-attr-preserve').each(function () {
+                    params.set($(this).attr('name'), $(this).val());
+                });
+                if ($form.find('[name="orderby"]').length) {
+                    params.set('orderby', $form.find('[name="orderby"]').val());
+                }
+
+                loadFilteredProducts(action + '?' + params.toString());
+            });
+
+            // ── Перехват ссылок (чипы активных фильтров, сброс) ──────────────
+            $(document).on('click', '.tm-pf-chip, .tm-pf-active a', function (e) {
                 var href = $(this).attr('href');
-                if (!href || href.charAt(0) === '#' || href.indexOf('javascript') === 0) return;
-                // Позволяем fe_widget работать с его ссылками, но ловим навигацию
-                // через небольшую задержку (после того как плагин может уже обработать)
-                var self = this;
-                setTimeout(function () {
-                    if (!isFiltering && window.location.href !== href) {
-                        e.preventDefault();
-                        loadFilteredProducts(href);
-                    }
-                }, 0);
+                if (!href || href.charAt(0) === '#') return;
                 e.preventDefault();
                 loadFilteredProducts(href);
             });
 
-            // Формы (price range и другие GET-формы)
-            $(document).on('submit', '.tm-filter form', function (e) {
+            // ── Старый фильтр (fe_widget) — ссылки и формы ───────────────────
+            $(document).on('click', '.tm-filter a:not(.tm-pf-chip):not(.tm-pf-active a)', function (e) {
+                var href = $(this).attr('href');
+                if (!href || href.charAt(0) === '#' || href.indexOf('javascript') === 0) return;
+                e.preventDefault();
+                loadFilteredProducts(href);
+            });
+
+            $(document).on('submit', '.tm-filter form:not(#tm-filter-form)', function (e) {
                 e.preventDefault();
                 var action = $(this).attr('action') || window.location.pathname;
                 var params = $(this).serialize();
@@ -556,6 +590,225 @@ $( ".home-popup-close" ).on( "click", function() {
 	$('.home-popup').fadeOut()
 	$('.home-popup').css('right','-1000px')
 });
-			  
-			  
-			  
+
+
+// =============================================================================
+// Встроенный фильтр товаров: слайдер цены + аккордеоны
+// =============================================================================
+
+(function () {
+    'use strict';
+
+    // ── Слайдер цены ─────────────────────────────────────────────────────────
+    function initPriceSlider() {
+        var slider = document.getElementById('tm-price-slider');
+        if (!slider) return;
+
+        var minR = document.getElementById('tm-price-min-r');
+        var maxR = document.getElementById('tm-price-max-r');
+        var minN = document.getElementById('tm-price-min-n');
+        var maxN = document.getElementById('tm-price-max-n');
+        var fill = document.getElementById('tm-price-fill');
+        if (!minR || !maxR || !minN || !maxN || !fill) return;
+
+        // Флаг — уже инициализирован, не навешивать повторно
+        if (slider.dataset.inited) return;
+        slider.dataset.inited = '1';
+
+        var rangeMin = parseFloat(slider.dataset.min) || 0;
+        var rangeMax = parseFloat(slider.dataset.max) || 100000;
+        var span     = rangeMax - rangeMin || 1;
+
+        function clamp(val, lo, hi) {
+            return Math.max(lo, Math.min(hi, isNaN(val) ? lo : val));
+        }
+
+        function updateFill() {
+            var lo = (parseFloat(minR.value) - rangeMin) / span * 100;
+            var hi = (parseFloat(maxR.value) - rangeMin) / span * 100;
+            fill.style.left  = lo + '%';
+            fill.style.width = Math.max(0, hi - lo) + '%';
+            // Z-index: если min достиг max — поднимаем min наверх чтобы
+            // можно было тащить его влево (иначе он под max-слайдером)
+            if (parseFloat(minR.value) >= parseFloat(maxR.value) - (rangeMax - rangeMin) * 0.05) {
+                minR.style.zIndex = 3;
+                maxR.style.zIndex = 2;
+            } else {
+                minR.style.zIndex = 2;
+                maxR.style.zIndex = 3;
+            }
+        }
+
+        minR.addEventListener('input', function () {
+            var v = clamp(parseFloat(this.value), rangeMin, parseFloat(maxR.value));
+            this.value = v;
+            minN.value = v;
+            updateFill();
+        });
+
+        maxR.addEventListener('input', function () {
+            var v = clamp(parseFloat(this.value), parseFloat(minR.value), rangeMax);
+            this.value = v;
+            maxN.value = v;
+            updateFill();
+        });
+
+        minN.addEventListener('change', function () {
+            var v = clamp(parseFloat(this.value), rangeMin, parseFloat(maxN.value));
+            this.value = v;
+            minR.value = v;
+            updateFill();
+        });
+
+        maxN.addEventListener('change', function () {
+            var v = clamp(parseFloat(this.value), parseFloat(minN.value), rangeMax);
+            this.value = v;
+            maxR.value = v;
+            updateFill();
+        });
+
+        // Первичная прорисовка заливки
+        updateFill();
+    }
+
+    // ── Аккордеоны групп фильтра ──────────────────────────────────────────────
+    // Используем делегирование (один обработчик на весь фильтр),
+    // а не forEach + addEventListener на каждую кнопку, чтобы избежать
+    // дублирования при реинициализации после AJAX
+    function initFilterAccordions() {
+        var container = document.getElementById('tm-filter-widget');
+        if (!container || container.dataset.accordionInited) return;
+        container.dataset.accordionInited = '1';
+
+        container.addEventListener('click', function (e) {
+            var btn = e.target.closest('.tm-pf-group__head');
+            if (!btn) return;
+
+            var group  = btn.closest('.tm-pf-group');
+            var body   = group.querySelector('.tm-pf-group__body');
+            var isOpen = group.classList.contains('tm-pf-group--open');
+
+            if (isOpen) {
+                group.classList.remove('tm-pf-group--open');
+                body.hidden = true;
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                group.classList.add('tm-pf-group--open');
+                body.hidden = false;
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    }
+
+    // ── «Показать ещё» / «Свернуть» ─────────────────────────────────────────
+    function initShowMore() {
+        var container = document.getElementById('tm-filter-widget');
+        if (!container || container.dataset.showMoreInited) return;
+        container.dataset.showMoreInited = '1';
+        container.addEventListener('click', function (e) {
+            var btn = e.target.closest('.tm-pf-show-more');
+            if (!btn) return;
+            var group  = btn.closest('.tm-pf-group');
+            var isOpen = btn.getAttribute('aria-expanded') === 'true';
+            var limit  = parseInt(btn.dataset.limit, 10);
+            var total  = parseInt(btn.dataset.total, 10);
+            if (isOpen) {
+                var idx = 0;
+                group.querySelectorAll('.tm-pf-list__item:not(.is-checked), .tm-pf-swatch-item:not(.is-checked)').forEach(function (li) {
+                    if (idx >= limit) li.classList.add('tm-pf-hidden');
+                    idx++;
+                });
+                btn.setAttribute('aria-expanded', 'false');
+                btn.querySelector('.tm-pf-show-more__text').textContent = 'Ещё ' + (total - limit);
+                btn.querySelector('.tm-pf-show-more__arrow').style.transform = '';
+            } else {
+                group.querySelectorAll('.tm-pf-hidden').forEach(function (el) { el.classList.remove('tm-pf-hidden'); });
+                btn.setAttribute('aria-expanded', 'true');
+                btn.querySelector('.tm-pf-show-more__text').textContent = 'Свернуть';
+                btn.querySelector('.tm-pf-show-more__arrow').style.transform = 'rotate(180deg)';
+            }
+        });
+    }
+
+    // ── Поиск внутри группы ──────────────────────────────────────────────────
+    function initGroupSearch() {
+        var container = document.getElementById('tm-filter-widget');
+        if (!container || container.dataset.searchInited) return;
+        container.dataset.searchInited = '1';
+        container.addEventListener('input', function (e) {
+            if (!e.target.classList.contains('tm-pf-search__input')) return;
+            var query = e.target.value.toLowerCase();
+            var group = e.target.closest('.tm-pf-group');
+            var moreBtn = group.querySelector('.tm-pf-show-more');
+            group.querySelectorAll('.tm-pf-list__item, .tm-pf-swatch-item').forEach(function (li) {
+                var inp = li.querySelector('[data-search]');
+                var val = inp ? inp.dataset.search : li.textContent.toLowerCase();
+                li.style.display = (!query || val.indexOf(query) !== -1) ? '' : 'none';
+            });
+            if (moreBtn) moreBtn.style.display = query ? 'none' : '';
+        });
+        container.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && e.target.classList.contains('tm-pf-search__input')) {
+                e.target.value = '';
+                e.target.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+    }
+
+    // ── Сортировка ───────────────────────────────────────────────────────────
+    function initSortSelect() {
+        var sel = document.getElementById('tm-sort-select');
+        if (!sel || sel.dataset.inited) return;
+        sel.dataset.inited = '1';
+        sel.addEventListener('change', function () {
+            var params = new URLSearchParams(window.location.search);
+            params.set('orderby', this.value);
+            params.delete('paged');
+            var url = window.location.pathname + '?' + params.toString();
+            if (typeof loadFilteredProducts === 'function') {
+                loadFilteredProducts(url);
+            } else {
+                window.location.href = url;
+            }
+        });
+    }
+
+    // ── Инициализация при загрузке страницы ─────────────────────────────────
+    initPriceSlider();
+    initFilterAccordions();
+    initShowMore();
+    initGroupSearch();
+    initSortSelect();
+
+    // Реинициализация после AJAX-обновления фильтра
+    document.addEventListener('tm_filter_updated', function () {
+        initPriceSlider();
+        initFilterAccordions();
+        initShowMore();
+        initGroupSearch();
+        initSortSelect();
+    });
+
+    // MutationObserver: сбрасываем флаги когда AJAX заменяет содержимое
+    var filterWidget = document.getElementById('tm-filter-widget');
+    if (filterWidget) {
+        var observer = new MutationObserver(function () {
+            var w = document.getElementById('tm-filter-widget');
+            if (w) {
+                delete w.dataset.accordionInited;
+                delete w.dataset.showMoreInited;
+                delete w.dataset.searchInited;
+            }
+            var s = document.getElementById('tm-price-slider');
+            if (s) delete s.dataset.inited;
+
+            initPriceSlider();
+            initFilterAccordions();
+            initShowMore();
+            initGroupSearch();
+            // Сортировка — не в фильтре, не нужно реинитить
+        });
+        observer.observe(filterWidget, { childList: true, subtree: false });
+    }
+
+}());

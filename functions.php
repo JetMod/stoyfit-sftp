@@ -546,6 +546,357 @@ function custom_image_shortcode_projects($atts)
 add_shortcode('custom_projects_image', 'custom_image_shortcode_projects');
 
 
+// ── Встроенный фильтр товаров: вспомогательные функции ───────────────────────
+
+/**
+ * Возвращает ЧИСТЫЙ URL текущей страницы БЕЗ каких-либо GET-параметров.
+ *
+ * ВАЖНО: нельзя использовать wc_get_current_product_page_url() /
+ * get_pagenum_link() — они сохраняют существующие query-params,
+ * что приводит к двойному '?' при построении URL фильтра.
+ */
+function tm_filter_base_url()
+{
+    // Страница магазина
+    if (function_exists('is_shop') && is_shop()) {
+        return wc_get_page_permalink('shop');
+    }
+
+    // Категория товаров
+    if (function_exists('is_product_category') && is_product_category()) {
+        $obj = get_queried_object();
+        if ($obj && !is_wp_error($obj)) {
+            $url = get_term_link($obj);
+            return is_wp_error($url) ? home_url('/') : $url;
+        }
+    }
+
+    // Тег товаров
+    if (function_exists('is_product_tag') && is_product_tag()) {
+        $obj = get_queried_object();
+        if ($obj && !is_wp_error($obj)) {
+            $url = get_term_link($obj);
+            return is_wp_error($url) ? home_url('/') : $url;
+        }
+    }
+
+    // Fallback: берём путь из запроса, без query-строки
+    global $wp;
+    return home_url(trailingslashit($wp->request));
+}
+
+/**
+ * Строит URL, убирая из текущего запроса указанные параметры.
+ */
+function tm_filter_remove_params(array $remove_keys)
+{
+    $params = $_GET;
+    foreach ($remove_keys as $k) {
+        unset($params[$k]);
+    }
+    $base = tm_filter_base_url();
+    return $base . (!empty($params) ? '?' . http_build_query($params) : '');
+}
+
+/**
+ * Строит URL, переключая один терм атрибута (добавляет если нет, убирает если есть).
+ * Сохраняет диапазон цен и остальные атрибуты.
+ */
+function tm_filter_toggle_term($taxonomy, $term_slug)
+{
+    $params     = $_GET;
+    $filter_key = 'filter_' . $taxonomy;
+    $current    = isset($params[$filter_key]) && $params[$filter_key] !== ''
+        ? array_map('sanitize_title', explode(',', $params[$filter_key]))
+        : array();
+
+    if (in_array($term_slug, $current)) {
+        $current = array_values(array_filter($current, function ($t) use ($term_slug) {
+            return $t !== $term_slug;
+        }));
+    } else {
+        $current[] = $term_slug;
+    }
+
+    if (empty($current)) {
+        unset($params[$filter_key]);
+    } else {
+        $params[$filter_key] = implode(',', $current);
+    }
+
+    // Убираем пагинацию при смене фильтра
+    unset($params['paged']);
+
+    $base = tm_filter_base_url();
+    return $base . (!empty($params) ? '?' . http_build_query($params) : '');
+}
+
+/**
+ * Получает активные атрибутные фильтры из URL.
+ * Возвращает: array[ 'taxonomy' => ['slug1', 'slug2'], ... ]
+ */
+function tm_filter_get_active_attrs()
+{
+    $active = array();
+    foreach ($_GET as $key => $value) {
+        if (strpos($key, 'filter_') === 0 && !empty($value)) {
+            $taxonomy          = substr($key, 7); // убираем 'filter_'
+            $active[$taxonomy] = array_map('sanitize_title', explode(',', $value));
+        }
+    }
+    return $active;
+}
+
+/**
+ * Возвращает IDs опубликованных товаров для текущего контекста страницы.
+ *
+ * - На странице категории: только товары из этой категории
+ * - На странице тега: только товары с этим тегом
+ * - На главной странице магазина: null (все товары)
+ *
+ * Результат кэшируется на 1 час.
+ */
+function tm_filter_get_context_product_ids()
+{
+    // На главной странице магазина — контекст не нужен
+    if (function_exists('is_shop') && is_shop()) {
+        return null;
+    }
+
+    $obj = get_queried_object();
+    if (!$obj || !isset($obj->term_id, $obj->taxonomy)) {
+        return null;
+    }
+
+    $cache_key = 'tm_ctx_ids_' . $obj->term_id;
+    $cached    = wp_cache_get($cache_key, 'tm_product_filters');
+    if (false !== $cached) {
+        return $cached;
+    }
+
+    global $wpdb;
+
+    // Получаем IDs товаров в текущей категории/теге через прямой SQL (быстро)
+    $ids = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT DISTINCT tr.object_id
+             FROM {$wpdb->term_relationships} tr
+             INNER JOIN {$wpdb->term_taxonomy} tt
+                 ON tr.term_taxonomy_id = tt.term_taxonomy_id
+             INNER JOIN {$wpdb->posts} p
+                 ON tr.object_id = p.ID
+             WHERE tt.term_id  = %d
+               AND tt.taxonomy = %s
+               AND p.post_status = 'publish'
+               AND p.post_type   = 'product'",
+            $obj->term_id,
+            $obj->taxonomy
+        )
+    );
+
+    // Если категория пуста — пустой массив (но не null, чтобы не показывать ничего)
+    $result = !empty($ids) ? array_map('intval', $ids) : array(0);
+
+    wp_cache_set($cache_key, $result, 'tm_product_filters', HOUR_IN_SECONDS);
+
+    return $result;
+}
+
+/**
+ * Получает диапазон цен для опубликованных товаров.
+ * Если переданы $product_ids — только для этих товаров (контекст категории).
+ * Возвращает ['min' => float, 'max' => float].
+ */
+function tm_filter_get_price_range($product_ids = null)
+{
+    global $wpdb;
+
+    $where_ids = '';
+    if (!empty($product_ids) && is_array($product_ids)) {
+        $ids_list  = implode(',', array_map('intval', $product_ids));
+        $where_ids = " AND p.ID IN ({$ids_list})";
+    }
+
+    $row = $wpdb->get_row(
+        "SELECT
+            MIN(CAST(pm.meta_value AS DECIMAL(10,2))) AS min_price,
+            MAX(CAST(pm.meta_value AS DECIMAL(10,2))) AS max_price
+         FROM {$wpdb->postmeta} pm
+         INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+         WHERE pm.meta_key = '_price'
+           AND pm.meta_value != ''
+           AND p.post_status = 'publish'
+           AND p.post_type   = 'product'
+           {$where_ids}"
+    );
+
+    return array(
+        'min' => $row && $row->min_price !== null ? floor(floatval($row->min_price)) : 0,
+        'max' => $row && $row->max_price !== null ? ceil(floatval($row->max_price))  : 100000,
+    );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Фильтр: цвет и сортировка ─────────────────────────────────────────────────
+
+/**
+ * Определяет, является ли атрибут «цветовым» по его названию.
+ */
+function tm_is_color_attribute($label, $slug)
+{
+    $s = mb_strtolower($label . ' ' . $slug, 'UTF-8');
+    foreach (array('цвет', 'color', 'colour', 'краска', 'оттен') as $kw) {
+        if (mb_strpos($s, $kw, 0, 'UTF-8') !== false) return true;
+    }
+    return false;
+}
+
+/**
+ * Возвращает HEX-цвет для термина.
+ * Сначала term_meta 'tm_color', затем словарь русских названий.
+ */
+function tm_get_term_color_hex($term_name, $term_id = 0)
+{
+    if ($term_id) {
+        $custom = get_term_meta($term_id, 'tm_color', true);
+        if ($custom) return $custom;
+    }
+    static $map = null;
+    if (null === $map) {
+        $map = array(
+            'белый' => '#f5f5f5', 'бел' => '#f5f5f5',
+            'черный' => '#1c1c1c', 'черн' => '#1c1c1c',
+            'красный' => '#cc2222', 'красн' => '#cc2222',
+            'зеленый' => '#4CAF50', 'зелен' => '#4CAF50',
+            'синий' => '#1565C0', 'голубой' => '#29B6F6',
+            'желтый' => '#FDD835', 'желт' => '#FDD835',
+            'оранжевый' => '#FF6F00', 'оранж' => '#FF6F00',
+            'серый' => '#9E9E9E', 'антрацит' => '#455A64',
+            'темно-серый' => '#424242', 'светло-серый' => '#BDBDBD',
+            'коричневый' => '#795548', 'коричн' => '#795548',
+            'каштан' => '#954535',
+            'бежевый' => '#D2B48C', 'беж' => '#D2B48C',
+            'песок' => '#C2B280', 'терракот' => '#CC4E14',
+            'кирпич' => '#B94A2C', 'розовый' => '#EC407A',
+            'фиолетовый' => '#7B1FA2', 'лайм' => '#C5E01E',
+            'лимон' => '#F9FF26', 'мокрый асфальт' => '#607D8B',
+        );
+    }
+    $n = mb_strtolower(trim($term_name), 'UTF-8');
+    foreach ($map as $kw => $hex) {
+        if (mb_strpos($n, $kw, 0, 'UTF-8') !== false) return $hex;
+    }
+    return null;
+}
+
+/**
+ * Опции сортировки каталога.
+ */
+function tm_get_sort_options()
+{
+    return array(
+        'menu_order' => 'По умолчанию',
+        'popularity' => 'По популярности',
+        'date'       => 'Сначала новые',
+        'price'      => 'Цена ↑',
+        'price-desc' => 'Цена ↓',
+    );
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
+// ── Принудительное применение фильтров к WooCommerce-запросу ─────────────────
+//
+// WooCommerce обрабатывает filter_pa_XXX только когда активен LayeredNav-виджет.
+// Этот хук применяет фильтры явно — как независимый уровень поверх WC.
+//
+add_action('pre_get_posts', 'tm_apply_product_filters', 30);
+function tm_apply_product_filters($query)
+{
+    if (
+        is_admin()
+        || !$query->is_main_query()
+        || !(
+            (function_exists('is_shop')             && is_shop())             ||
+            (function_exists('is_product_category') && is_product_category()) ||
+            (function_exists('is_product_tag')      && is_product_tag())
+        )
+    ) {
+        return;
+    }
+
+    // ── Атрибутные фильтры: filter_pa_XXX=slug1,slug2 ───────────────────────
+    $new_tax = array();
+
+    foreach ($_GET as $key => $raw_value) {
+        if (strpos($key, 'filter_') !== 0 || '' === trim($raw_value)) {
+            continue;
+        }
+
+        $taxonomy = substr($key, 7);
+
+        if (!taxonomy_exists($taxonomy)) {
+            continue;
+        }
+
+        $terms = array_values(array_filter(
+            array_map('sanitize_title', explode(',', $raw_value))
+        ));
+
+        if (empty($terms)) {
+            continue;
+        }
+
+        $query_type = isset($_GET['query_type_' . $taxonomy])
+            ? sanitize_key($_GET['query_type_' . $taxonomy])
+            : 'or';
+
+        $new_tax[] = array(
+            'taxonomy' => $taxonomy,
+            'field'    => 'slug',
+            'terms'    => $terms,
+            'operator' => 'and' === $query_type ? 'AND' : 'IN',
+        );
+    }
+
+    if (!empty($new_tax)) {
+        $existing = $query->get('tax_query');
+        if (!is_array($existing)) {
+            $existing = array();
+        }
+        // relation AND — все выбранные атрибуты должны совпасть
+        $combined               = array_merge($existing, $new_tax);
+        $combined['relation']   = 'AND';
+        $query->set('tax_query', $combined);
+    }
+
+    // ── Фильтр цены: min_price / max_price ──────────────────────────────────
+    $min = isset($_GET['min_price']) && is_numeric($_GET['min_price'])
+        ? floatval($_GET['min_price']) : null;
+    $max = isset($_GET['max_price']) && is_numeric($_GET['max_price'])
+        ? floatval($_GET['max_price']) : null;
+
+    if ($min !== null || $max !== null) {
+        $meta_q = $query->get('meta_query') ?: array();
+
+        if ($min !== null && $max !== null) {
+            $meta_q[] = array(
+                'key'     => '_price',
+                'value'   => array($min, $max),
+                'compare' => 'BETWEEN',
+                'type'    => 'DECIMAL(10,2)',
+            );
+        } elseif ($min !== null) {
+            $meta_q[] = array('key' => '_price', 'value' => $min, 'compare' => '>=', 'type' => 'DECIMAL(10,2)');
+        } else {
+            $meta_q[] = array('key' => '_price', 'value' => $max, 'compare' => '<=', 'type' => 'DECIMAL(10,2)');
+        }
+
+        $query->set('meta_query', $meta_q);
+    }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 // ── Шорткод [featured_products_block] ────────────────────────────────────────
 //
 // Примеры использования:

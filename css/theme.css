@@ -16603,6 +16603,15 @@ div.wpcf7 .ajax-loader {
     position: relative;
 }
 
+/* Когда фильтров нет — товары на всю ширину */
+.tm-catalog-no-filters {
+    display: block;
+}
+
+.tm-catalog-no-filters .tm-catalog-main {
+    width: 100%;
+}
+
 .tm-filter-sidebar {
     width: 260px;
     flex-shrink: 0;
@@ -16617,8 +16626,10 @@ div.wpcf7 .ajax-loader {
 
 /* ── Панель фильтров (desktop) ──────────────────────────────────────────── */
 
+/* На десктопе заголовок и футер скрыты — видна только кнопка «Фильтры»
+   в мобильном баре. Кнопка «Показать результаты» — только в мобильном drawer */
 .tm-filter-sidebar__header {
-    display: none; /* на десктопе заголовок не нужен */
+    display: none;
 }
 
 .tm-filter-sidebar__footer {
@@ -16626,7 +16637,7 @@ div.wpcf7 .ajax-loader {
 }
 
 .tm-filter-sidebar__body {
-    background: #f8f8f8;
+    background: #fff;
     border: 1px solid #ebebeb;
     border-radius: 4px;
     overflow: hidden;
@@ -16732,6 +16743,774 @@ div.wpcf7 .ajax-loader {
 
 .tm-filter .price_slider_amount button:hover {
     background: #9c000b;
+}
+
+/* ==========================================================================
+   Встроенный фильтр товаров (.tm-product-filter)
+   ========================================================================== */
+
+/* Обёртка */
+.tm-product-filter {
+    font-size: 14px;
+}
+
+/* ── Активные фильтры (чипы) ────────────────────────────────────────────── */
+
+.tm-pf-active {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ebebeb;
+    background: #fff;
+}
+
+.tm-pf-active__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tm-pf-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px 4px 10px;
+    background: #fff0f1;
+    border: 1px solid #f5c6ca;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #c0392b;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+    line-height: 1;
+}
+
+.tm-pf-chip:hover {
+    background: #ffd5d5;
+    border-color: #e74c3c;
+    color: #c0392b;
+}
+
+.tm-pf-chip__x {
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+}
+
+.tm-pf-chip--reset {
+    background: #f5f5f5;
+    border-color: #ddd;
+    color: #666;
+    padding: 4px 10px;
+}
+
+.tm-pf-chip--reset:hover {
+    background: #ebebeb;
+    border-color: #bbb;
+    color: #333;
+}
+
+/* ── Группа фильтра (аккордеон) ─────────────────────────────────────────── */
+
+.tm-pf-group {
+    border-bottom: 1px solid #ebebeb;
+}
+
+.tm-pf-group__head {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 13px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    gap: 8px;
+    text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #000;
+    transition: background 0.15s;
+}
+
+.tm-pf-group__head:hover {
+    background: #fafafa;
+}
+
+.tm-pf-group__name {
+    flex: 1;
+}
+
+.tm-pf-group__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #e52835;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 9px;
+    flex-shrink: 0;
+}
+
+.tm-pf-group__arrow {
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    color: #aaa;
+}
+
+.tm-pf-group--open .tm-pf-group__arrow {
+    transform: rotate(180deg);
+}
+
+.tm-pf-group__body {
+    padding: 0 16px 14px;
+}
+
+/* ── Слайдер цены ───────────────────────────────────────────────────────── */
+
+.tm-price-slider {
+    position: relative;
+    height: 20px;
+    margin: 8px 8px 18px;
+}
+
+.tm-price-slider__track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.tm-price-slider__fill {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: #e52835;
+    border-radius: 2px;
+}
+
+/* Два range-input стакаются */
+.tm-price-slider__range {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 20px;
+    background: none;
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
+.tm-price-slider__range::-webkit-slider-thumb {
+    pointer-events: all;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #e52835;
+    cursor: grab;
+    appearance: none;
+    -webkit-appearance: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    transition: box-shadow 0.15s, transform 0.1s;
+}
+
+.tm-price-slider__range::-moz-range-thumb {
+    pointer-events: all;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #e52835;
+    cursor: grab;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.tm-price-slider__range::-webkit-slider-thumb:hover,
+.tm-price-slider__range:active::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px rgba(229, 40, 53, 0.12);
+    transform: scale(1.1);
+}
+
+.tm-price-slider__range--max {
+    /* НЕ используем direction: rtl — это инвертировало бы положение thumb */
+    z-index: 2; /* max-slider поверх min, управляется JS */
+}
+
+/* Поддержка hidden-атрибута в старых браузерах */
+.tm-pf-group__body[hidden] {
+    display: none;
+}
+
+/* Поля ввода цены */
+.tm-price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.tm-price-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 0 8px;
+    height: 34px;
+    transition: border-color 0.2s;
+}
+
+.tm-price-input-wrap:focus-within {
+    border-color: #e52835;
+}
+
+.tm-price-input-wrap__label {
+    font-size: 11px;
+    color: #aaa;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tm-price-input-wrap__unit {
+    font-size: 11px;
+    color: #aaa;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tm-price-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #000;
+    outline: none;
+    width: 100%;
+    -moz-appearance: textfield;
+}
+
+.tm-price-input::-webkit-outer-spin-button,
+.tm-price-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.tm-price-inputs__sep {
+    color: #bbb;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* Кнопка «Применить» цену */
+.tm-price-apply {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    background: #e52835;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tm-price-apply:hover {
+    background: #9c000b;
+}
+
+/* ── «Очистить группу» (чип внутри тела группы) ─────────────────────────── */
+
+.tm-pf-group__clear {
+    display: inline-flex;
+    margin-bottom: 8px;
+    font-size: 11px;
+    padding: 3px 8px 3px 10px;
+}
+
+/* ── Поиск внутри группы ────────────────────────────────────────────────── */
+
+.tm-pf-search {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.tm-pf-search__input {
+    width: 100%;
+    height: 32px;
+    padding: 0 10px 0 30px;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    color: #333;
+    background: #fafafa;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.tm-pf-search__input:focus {
+    border-color: #e52835;
+    background: #fff;
+}
+
+.tm-pf-search__icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+}
+
+/* ── «Показать ещё» ─────────────────────────────────────────────────────── */
+
+.tm-pf-hidden {
+    display: none;
+}
+
+.tm-pf-show-more {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    padding: 8px 0 2px;
+    background: none;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #e52835;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.15s;
+}
+
+.tm-pf-show-more:hover {
+    color: #9c000b;
+}
+
+.tm-pf-show-more__arrow {
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+/* ── Цветовые свотчи ────────────────────────────────────────────────────── */
+
+.tm-pf-swatches {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 4px;
+}
+
+.tm-pf-swatch-item {
+    position: relative;
+}
+
+.tm-pf-swatch-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.tm-pf-swatch-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.tm-pf-swatch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: #e0e0e0;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Белый/светлый свотч — тёмная граница */
+.tm-pf-swatch[style*="#f5f5f5"],
+.tm-pf-swatch[style*="#fff"],
+.tm-pf-swatch[style*="#FFFF"],
+.tm-pf-swatch[style*="#FDD"] {
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+}
+
+.tm-pf-swatch__letter {
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.tm-pf-swatch-label:hover .tm-pf-swatch {
+    border-color: #e52835;
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Выбранный свотч */
+.tm-pf-swatch-item.is-checked .tm-pf-swatch {
+    border-color: #e52835;
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px rgba(229, 40, 53, 0.2);
+}
+
+/* Галочка поверх выбранного */
+.tm-pf-swatch-item.is-checked .tm-pf-swatch::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/14px no-repeat;
+    /* тёмный фон на светлых свотчах */
+}
+
+.tm-pf-swatch-name {
+    font-size: 10px;
+    color: #555;
+    text-align: center;
+    max-width: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.tm-pf-swatch-item.is-checked .tm-pf-swatch-name {
+    color: #e52835;
+    font-weight: 600;
+}
+
+/* ── Тулбар каталога (счётчик + сортировка) ─────────────────────────────── */
+
+.tm-catalog-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 14px;
+    gap: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.tm-catalog-toolbar__count {
+    font-size: 13px;
+    color: #888;
+}
+
+.tm-catalog-toolbar__count span {
+    font-weight: 700;
+    color: #000;
+}
+
+.tm-catalog-toolbar__sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tm-catalog-toolbar__sort-label {
+    font-size: 12px;
+    color: #888;
+    white-space: nowrap;
+}
+
+.tm-sort-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.tm-sort-select {
+    height: 32px;
+    padding: 0 30px 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s;
+}
+
+.tm-sort-select:focus,
+.tm-sort-select:hover {
+    border-color: #e52835;
+}
+
+.tm-sort-arrow {
+    position: absolute;
+    right: 10px;
+    pointer-events: none;
+    color: #888;
+}
+
+@media (max-width: 480px) {
+    .tm-catalog-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+/* ── Список чекбоксов ───────────────────────────────────────────────────── */
+
+.tm-pf-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tm-pf-list__item {
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.tm-pf-list__item:last-child {
+    border-bottom: none;
+}
+
+.tm-pf-list__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    cursor: pointer;
+    position: relative;
+    font-size: 0; /* убираем пробелы */
+}
+
+.tm-pf-list__label:hover .tm-pf-list__name {
+    color: #e52835;
+}
+
+/* Скрываем настоящий чекбокс */
+.tm-pf-list__label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+/* Кастомный чекбокс */
+.tm-pf-list__check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-radius: 2px;
+    flex-shrink: 0;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 0;
+}
+
+.tm-pf-list__check::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 5px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translate(1px, -1px);
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+/* Состояние: выбран */
+.tm-pf-list__item.is-checked .tm-pf-list__check,
+.tm-pf-list__label:has(input:checked) .tm-pf-list__check {
+    background: #e52835;
+    border-color: #e52835;
+}
+
+.tm-pf-list__item.is-checked .tm-pf-list__check::after,
+.tm-pf-list__label:has(input:checked) .tm-pf-list__check::after {
+    opacity: 1;
+}
+
+/* Hover на невыбранном */
+.tm-pf-list__label:hover .tm-pf-list__check {
+    border-color: #e52835;
+}
+
+.tm-pf-list__name {
+    flex: 1;
+    font-size: 13px;
+    color: #333;
+    line-height: 1.3;
+    transition: color 0.15s;
+}
+
+.tm-pf-list__item.is-checked .tm-pf-list__name {
+    font-weight: 600;
+    color: #000;
+}
+
+.tm-pf-list__count {
+    font-size: 11px;
+    color: #bbb;
+    flex-shrink: 0;
+    min-width: 20px;
+    text-align: right;
+}
+
+/* ── Скроллбар внутри сайдбара ──────────────────────────────────────────── */
+
+.tm-filter-sidebar__body::-webkit-scrollbar { width: 4px; }
+.tm-filter-sidebar__body::-webkit-scrollbar-track { background: #f5f5f5; }
+.tm-filter-sidebar__body::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+/* ── Нативные WooCommerce-фильтры (фолбэк когда fe_widget пуст) ─────────── */
+
+.tm-native-filter-block {
+    padding: 14px 16px;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.tm-native-filter-block:last-child {
+    border-bottom: none;
+}
+
+.tm-native-filter-block__title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+    margin: 0 0 12px;
+}
+
+/* Слайдер цены */
+.tm-native-filter-block .price_slider_wrapper {
+    padding-bottom: 4px;
+}
+
+.tm-native-filter-block .price_slider {
+    margin: 8px 0 16px;
+}
+
+.tm-native-filter-block .ui-slider {
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    border: none;
+}
+
+.tm-native-filter-block .ui-slider-range {
+    background: #e52835;
+    border-radius: 2px;
+}
+
+.tm-native-filter-block .ui-slider-handle {
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border: 2px solid #e52835;
+    border-radius: 50%;
+    top: -6px;
+    cursor: grab;
+    outline: none;
+    transition: box-shadow 0.15s;
+}
+
+.tm-native-filter-block .ui-slider-handle:hover,
+.tm-native-filter-block .ui-slider-handle:active {
+    box-shadow: 0 0 0 4px rgba(229, 40, 53, 0.15);
+}
+
+.tm-native-filter-block .price_slider_amount {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.tm-native-filter-block .price_slider_amount .price_label {
+    font-size: 12px;
+    color: #555;
+    white-space: nowrap;
+}
+
+.tm-native-filter-block .price_slider_amount button {
+    margin-left: auto;
+    background: #e52835;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.tm-native-filter-block .price_slider_amount button:hover {
+    background: #9c000b;
+}
+
+/* Активные фильтры */
+.tm-native-filter-block .wc-layered-nav-term {
+    font-size: 13px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+}
+
+.tm-native-filter-block .wc-layered-nav-term .count {
+    color: #aaa;
+    font-size: 11px;
 }
 
 /* Кнопка «Сбросить фильтры» */
