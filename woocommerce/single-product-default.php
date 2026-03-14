@@ -300,6 +300,10 @@ if (post_password_required()) {
 // Блок «Похожие товары»
 $args = array('limit' => 8, 'title' => 'Похожие товары');
 get_template_part('template-parts/related-products', null, $args);
+
+// Блок «Рекомендуем посмотреть»
+$args_featured = array('title' => 'Рекомендуем посмотреть', 'tag' => 'recommended', 'limit' => 8);
+get_template_part('template-parts/featured-products', null, $args_featured);
 ?>
 
 <?php do_action('woocommerce_after_single_product'); ?>

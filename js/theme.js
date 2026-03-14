@@ -32,6 +32,33 @@ jQuery(function ($) {
             e.stopPropagation();
         });
 
+        // Кнопки +/- в мини-корзине: вешаем на .tm-mini-cart, т.к. клик внутри не всплывает до document
+        $miniCart.on('click', '.tm-cart-qty__btn', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $btn   = $(this);
+            var $wrap  = $btn.closest('.tm-cart-qty');
+            var $input = $wrap.find('input.qty, input[type="number"]');
+            if (!$input.length) return;
+            var min = parseInt($input.attr('min'), 10);
+            var max = parseInt($input.attr('max'), 10);
+            if (isNaN(min)) min = parseInt($wrap.attr('data-min'), 10);
+            if (isNaN(min)) min = 0;
+            if (isNaN(max)) max = parseInt($wrap.attr('data-max'), 10);
+            if (isNaN(max) || max < 0) max = 9999;
+            min = Math.max(0, min);
+            var val = parseInt($input.val(), 10);
+            if (isNaN(val) || val < min) val = min;
+            if (val > max && max < 9999) val = max;
+            if ($btn.hasClass('tm-cart-qty__btn--minus')) {
+                val = Math.max(min, val - 1);
+            } else {
+                val = Math.min(max, val + 1);
+            }
+            $input.val(val);
+            $input.trigger('change');
+        });
+
         // Клик вне — закрывает
         $(document).on('click', function () {
             closeCart();
@@ -44,10 +71,58 @@ jQuery(function ($) {
             }
         });
 
-        // После обновления корзины через AJAX — открываем мини-корзину
-        $(document.body).on('added_to_cart', function () {
-            openCart();
+        // Уведомление «Товар добавлен в корзину» по клику открывает страницу корзины
+        var addedToCartToastPending = null;
+        function showAddedToCartToast() {
+            var $t = $('.tm-added-to-cart-toast');
+            if (!$t.length) return;
+            if (addedToCartToastPending) {
+                clearTimeout(addedToCartToastPending);
+                addedToCartToastPending = null;
+            }
+            $t.addClass('tm-added-to-cart-toast--visible');
+            clearTimeout(window._tmAddedToastHide);
+            window._tmAddedToastHide = setTimeout(function () {
+                $t.removeClass('tm-added-to-cart-toast--visible');
+            }, 5000);
+        }
+        var $addedToast = $('<div class="tm-added-to-cart-toast" role="alert">' +
+            '<span class="tm-added-to-cart-toast__text">Товар добавлен в корзину</span>' +
+            '<span class="tm-added-to-cart-toast__hint">Нажмите, чтобы открыть корзину</span>' +
+            '</div>').appendTo('body');
+        $addedToast.on('click', function (e) {
+            e.stopPropagation();
+            var cartUrl = (typeof tmCartAjax !== 'undefined' && tmCartAjax.cartUrl) ? tmCartAjax.cartUrl : '';
+            if (cartUrl) {
+                window.location.href = cartUrl;
+            } else {
+                openCart();
+            }
+            $addedToast.removeClass('tm-added-to-cart-toast--visible');
         });
+        $(document.body).on('added_to_cart', function () {
+            showAddedToCartToast();
+        });
+        // Каталог: клик по «В корзину» на карточке — показать уведомление (если AJAX без события или с задержкой)
+        $(document).on('click', '.add_to_cart_button', function () {
+            addedToCartToastPending = setTimeout(function () {
+                addedToCartToastPending = null;
+                showAddedToCartToast();
+            }, 900);
+        });
+        // Показать уведомление при загрузке страницы после редиректа (форма «В корзину» без AJAX)
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('added_to_cart') === '1') {
+                params.delete('added_to_cart');
+                var newSearch = params.toString();
+                var newUrl = window.location.pathname + (newSearch ? '?' + newSearch : '') + window.location.hash;
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState({}, '', newUrl);
+                }
+                setTimeout(showAddedToCartToast, 150);
+            }
+        })();
         // ─────────────────────────────────────────────────────────────────────
 
         // ── Дропдаун аккаунта ─────────────────────────────────────────────────
@@ -106,6 +181,112 @@ jQuery(function ($) {
             var isPass   = $input.attr('type') === 'password';
             $input.attr('type', isPass ? 'text' : 'password');
             $(this).toggleClass('is-visible');
+        });
+        // ─────────────────────────────────────────────────────────────────────
+
+        // AJAX-обновление корзины (без перезагрузки страницы)
+        // $form — либо .woocommerce-cart-form (страница корзины), либо .woocommerce-mini-cart-form (мини-корзина)
+        function tmCartAjaxUpdate($form) {
+            if (typeof tmCartAjax === 'undefined') {
+                if ($form.length) $form.submit();
+                return;
+            }
+            var isMiniCart = $form.hasClass('woocommerce-mini-cart-form');
+            var $page = $('.tm-cart-page');
+            if (!isMiniCart && !$page.length) return;
+            if (isMiniCart) {
+                $('.tm-mini-cart__content').addClass('tm-mini-cart-updating');
+            } else {
+                $page.addClass('tm-cart-updating');
+            }
+            $.ajax({
+                url:  tmCartAjax.ajaxUrl,
+                type: 'POST',
+                data: $form.serialize() + '&action=tm_update_cart&nonce=' + encodeURIComponent(tmCartAjax.nonce),
+                success: function (res) {
+                    if (res.success && res.data) {
+                        if (!isMiniCart && res.data.cartHtml && $page.length) {
+                            var $new = $(res.data.cartHtml.trim());
+                            var $cart = $new.filter('.tm-cart-page').length ? $new.filter('.tm-cart-page') : $new.find('.tm-cart-page');
+                            $page.replaceWith($cart.length ? $cart.first() : $new);
+                            if (res.data.notices) {
+                                $('.woocommerce-notices-wrapper').first().html(res.data.notices);
+                            }
+                        }
+                        if (typeof res.data.count !== 'undefined') {
+                            $('.tm-cart-count').attr('data-count', res.data.count).text(res.data.countHtml || '');
+                        }
+                        if (res.data.miniCartHtml) {
+                            $('.tm-mini-cart__content').html(res.data.miniCartHtml);
+                        }
+                    } else {
+                        if ($form.length) $form.submit();
+                    }
+                },
+                error: function () {
+                    if ($form.length) $form.submit();
+                },
+                complete: function () {
+                    $('.tm-cart-page').removeClass('tm-cart-updating');
+                    $('.tm-mini-cart__content').removeClass('tm-mini-cart-updating');
+                }
+            });
+        }
+
+        // Кнопки +/- в корзине — изменить количество
+        $(document).on('click', '.tm-cart-qty__btn', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $btn   = $(this);
+            var $wrap  = $btn.closest('.tm-cart-qty');
+            var $input = $wrap.find('input.qty, input[type="number"]');
+            if (!$input.length) return;
+            var min = parseInt($input.attr('min'), 10);
+            var max = parseInt($input.attr('max'), 10);
+            if (isNaN(min)) min = parseInt($wrap.attr('data-min'), 10);
+            if (isNaN(min)) min = 0;
+            if (isNaN(max)) max = parseInt($wrap.attr('data-max'), 10);
+            if (isNaN(max) || max < 0) max = 9999;
+            min = Math.max(0, min);
+            var val = parseInt($input.val(), 10);
+            if (isNaN(val) || val < min) val = min;
+            if (val > max && max < 9999) val = max;
+            if ($btn.hasClass('tm-cart-qty__btn--minus')) {
+                val = Math.max(min, val - 1);
+            } else {
+                val = Math.min(max, val + 1);
+            }
+            $input.val(val);
+            $input.trigger('change');
+        });
+
+        // Перехват отправки формы корзины — AJAX вместо перезагрузки (кроме промокода)
+        $(document).on('submit', '.woocommerce-cart-form', function (e) {
+            var isCoupon = e.originalEvent && e.originalEvent.submitter && e.originalEvent.submitter.name === 'apply_coupon';
+            if (!isCoupon && typeof tmCartAjax !== 'undefined') {
+                e.preventDefault();
+                tmCartAjaxUpdate($(this));
+            }
+        });
+
+        // При изменении количества (страница корзины и мини-корзина) — min/max и AJAX
+        var cartUpdateTimeout;
+        $(document).on('change', '.woocommerce-cart-form input.qty, .woocommerce-mini-cart-form input.qty', function () {
+            var $input = $(this);
+            var min = parseInt($input.attr('min'), 10);
+            var max = parseInt($input.attr('max'), 10);
+            if (isNaN(min)) min = 0;
+            if (isNaN(max) || max < 0) max = 9999;
+            var val = parseInt($input.val(), 10);
+            if (isNaN(val) || val < min) val = min;
+            if (val > max) val = max;
+            $input.val(val);
+            var $form = $input.closest('.woocommerce-cart-form, .woocommerce-mini-cart-form');
+            if (!$form.length) return;
+            clearTimeout(cartUpdateTimeout);
+            cartUpdateTimeout = setTimeout(function () {
+                tmCartAjaxUpdate($form);
+            }, 400);
         });
         // ─────────────────────────────────────────────────────────────────────
 

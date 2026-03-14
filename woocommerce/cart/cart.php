@@ -127,8 +127,14 @@ do_action('woocommerce_before_cart');
                                 $_product,
                                 false
                             );
-                            echo apply_filters('woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item);
+                            $product_quantity = apply_filters('woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item);
+                            $data_max = ($max_quantity > 0) ? $max_quantity : 9999;
                             ?>
+                            <div class="tm-cart-qty" data-min="<?php echo esc_attr($min_quantity); ?>" data-max="<?php echo esc_attr($data_max); ?>">
+                                <button type="button" class="tm-cart-qty__btn tm-cart-qty__btn--minus" aria-label="Уменьшить">−</button>
+                                <?php echo $product_quantity; ?>
+                                <button type="button" class="tm-cart-qty__btn tm-cart-qty__btn--plus" aria-label="Увеличить">+</button>
+                            </div>
                         </td>
 
                         <!-- Подытог -->
@@ -192,6 +198,12 @@ do_action('woocommerce_before_cart');
             Продолжить покупки
         </a>
     </div>
+
+    <?php
+    // Блок «Рекомендуем посмотреть»
+    $args_featured = array('title' => 'Рекомендуем посмотреть', 'tag' => 'recommended', 'limit' => 8);
+    get_template_part('template-parts/featured-products', null, $args_featured);
+    ?>
 
 </div><!-- /tm-cart-page -->
 

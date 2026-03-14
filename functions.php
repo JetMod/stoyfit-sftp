@@ -31,6 +31,15 @@ function yoo_theme_scripts()
         wp_enqueue_script('yoo-theme-slick', get_template_directory_uri() . '/js/slick.min.js', array('yoo-theme-jquery'), '', true);
     }
 
+    // Данные для AJAX-корзины (страница корзины + мини-корзина в шапке)
+    if (function_exists('WC')) {
+        wp_localize_script('yoo-theme-main', 'tmCartAjax', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce'   => wp_create_nonce('tm_cart_update'),
+            'cartUrl' => function_exists('wc_get_cart_url') ? wc_get_cart_url() : '',
+        ));
+    }
+
     // Данные для AJAX-фильтра (только в каталоге)
     if (is_shop() || is_product_category() || is_product_tag()) {
         wp_localize_script('yoo-theme-main', 'tmFilterData', array(
@@ -175,6 +184,13 @@ add_filter('woocommerce_product_add_to_cart_text', 'tb_woo_custom_cart_button_te
 function tb_woo_custom_cart_button_text()
 {
     return __('В корзину', 'woocommerce');
+}
+
+// После добавления в корзину (редирект) — добавляем параметр для показа уведомления на странице
+add_filter('woocommerce_add_to_cart_redirect', 'tm_add_to_cart_redirect_with_param');
+function tm_add_to_cart_redirect_with_param($redirect_url)
+{
+    return add_query_arg('added_to_cart', '1', $redirect_url);
 }
 
 // выводим класс body категории товара в карточке товара
@@ -417,14 +433,13 @@ function tm_checkout_gettext($translated, $text, $domain)
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Русские метки навигации в личном кабинете
+// Русские метки навигации в личном кабинете (пункт «Загрузки» скрыт — для цифровых товаров не используется)
 add_filter('woocommerce_account_menu_items', 'tm_account_menu_items');
 function tm_account_menu_items($items)
 {
     return array(
         'dashboard'       => 'Главная',
         'orders'          => 'Мои заказы',
-        'downloads'       => 'Загрузки',
         'edit-address'    => 'Адреса доставки',
         'edit-account'    => 'Данные аккаунта',
         'customer-logout' => 'Выйти',
@@ -439,6 +454,86 @@ add_filter('woocommerce_endpoint_customer-logout_title', function() { return 'В
 
 // Регистрация: показывать поле пароля, чтобы пользователь задал его сам (а не по email)
 add_filter('option_woocommerce_registration_generate_password', function() { return 'no'; });
+
+// AJAX-обновление корзины без перезагрузки
+add_action('wp_ajax_tm_update_cart', 'tm_ajax_update_cart');
+add_action('wp_ajax_nopriv_tm_update_cart', 'tm_ajax_update_cart');
+function tm_ajax_update_cart()
+{
+    check_ajax_referer('tm_cart_update', 'nonce');
+    if (!function_exists('WC') || !WC()->cart) {
+        wp_send_json_error(array('message' => 'Корзина недоступна'));
+    }
+    if (!empty($_POST['cart']) && is_array($_POST['cart'])) {
+        foreach ($_POST['cart'] as $cart_item_key => $values) {
+            $qty = isset($values['qty']) ? wc_stock_amount(wp_unslash($values['qty'])) : 0;
+            WC()->cart->set_quantity($cart_item_key, $qty, true);
+        }
+        WC()->cart->calculate_totals();
+    }
+    ob_start();
+    wc_print_notices();
+    $notices = ob_get_clean();
+    ob_start();
+    echo do_shortcode('[woocommerce_cart]');
+    $cart_html = ob_get_clean();
+    $count     = WC()->cart->get_cart_contents_count();
+    ob_start();
+    woocommerce_mini_cart();
+    $mini_cart = ob_get_clean();
+    wp_send_json_success(array(
+        'cartHtml'   => $cart_html,
+        'notices'    => $notices,
+        'count'      => $count,
+        'countHtml'  => $count > 0 ? (string) $count : '',
+        'miniCartHtml' => $mini_cart,
+    ));
+}
+
+// AJAX: изменение количества одного товара в мини-корзине (+/-)
+add_action('wp_ajax_tm_update_mini_cart_item', 'tm_ajax_update_mini_cart_item');
+add_action('wp_ajax_nopriv_tm_update_mini_cart_item', 'tm_ajax_update_mini_cart_item');
+function tm_ajax_update_mini_cart_item()
+{
+    check_ajax_referer('tm_cart_update', 'nonce');
+    if (!function_exists('WC') || !WC()->cart) {
+        wp_send_json_error(array('message' => 'Корзина недоступна'));
+    }
+    $cart_item_key = isset($_POST['cart_item_key']) ? sanitize_text_field(wp_unslash($_POST['cart_item_key'])) : '';
+    $qty = isset($_POST['qty']) ? wc_stock_amount(wp_unslash($_POST['qty'])) : 0;
+    if ($cart_item_key === '' || !isset(WC()->cart->get_cart()[ $cart_item_key ])) {
+        wp_send_json_error(array('message' => 'Товар не найден в корзине'));
+    }
+    WC()->cart->set_quantity($cart_item_key, $qty, true);
+    WC()->cart->calculate_totals();
+    $count = WC()->cart->get_cart_contents_count();
+    ob_start();
+    woocommerce_mini_cart();
+    $mini_cart = ob_get_clean();
+    wp_send_json_success(array(
+        'miniCartHtml' => $mini_cart,
+        'count'        => $count,
+        'countHtml'    => $count > 0 ? (string) $count : '',
+    ));
+}
+
+// Фикс дублирования товаров в review-order на странице чекаута.
+// WooCommerce по умолчанию заменяет только <table.woocommerce-checkout-review-order-table>,
+// но наш шаблон выводит товары ВНЕ этой таблицы (в .tm-checkout-items).
+// Из-за этого при AJAX-обновлении чекаута таблица заменялась на весь шаблон (товары + таблица),
+// и товары появлялись дважды. Решение — заменять весь внешний контейнер .tm-checkout-order-review.
+add_filter('woocommerce_update_order_review_fragments', 'tm_fix_order_review_fragments');
+function tm_fix_order_review_fragments($fragments)
+{
+    ob_start();
+    woocommerce_order_review();
+    $html = ob_get_clean();
+
+    unset($fragments['.woocommerce-checkout-review-order-table']);
+    $fragments['.tm-checkout-order-review'] = $html;
+
+    return $fragments;
+}
 
 // AJAX-фрагменты для счётчика и мини-корзины в шапке
 add_filter('woocommerce_add_to_cart_fragments', 'tm_cart_fragments');
@@ -948,7 +1043,24 @@ function tm_featured_products_shortcode($atts)
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
-
+// Создаём тег «recommended» для блока «Рекомендуем посмотреть», если его ещё нет
+add_action('init', 'tm_ensure_recommended_tag', 20);
+function tm_ensure_recommended_tag()
+{
+    if (!taxonomy_exists('product_tag')) {
+        return;
+    }
+    $slug = 'recommended';
+    if (term_exists($slug, 'product_tag')) {
+        return;
+    }
+    wp_insert_term(
+        'Рекомендуем',
+        'product_tag',
+        array('slug' => $slug)
+    );
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 // adding new canonical for categories
 function replace_canonical_link() {
