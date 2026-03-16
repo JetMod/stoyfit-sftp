@@ -16366,6 +16366,30 @@ div.wpcf7 .ajax-loader {
     border-color: #2e7d32;
 }
 
+/* Вариативные товары: блок количества и кнопки в ряд */
+.tm-single-atc .woocommerce-variation-add-to-cart.variations_button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.tm-single-atc .woocommerce-variation-add-to-cart .tm-product-qty.tm-cart-qty {
+    flex-shrink: 0;
+}
+
+.tm-single-atc .woocommerce-variation-add-to-cart .tm-product-qty .tm-cart-qty__btn {
+    width: 44px;
+    height: 43px;
+}
+
+.tm-single-atc .woocommerce-variation-add-to-cart .tm-product-qty .quantity input.qty {
+    width: 52px;
+    height: 43px;
+    font-size: 14px;
+}
+
 /* ==========================================================================
    Страница корзины (cart.php)
    ========================================================================== */

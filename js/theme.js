@@ -32,6 +32,44 @@ jQuery(function ($) {
             e.stopPropagation();
         });
 
+        // Удаление товара из мини-корзины — AJAX без перезагрузки
+        $miniCart.on('click', '.remove_from_cart_button', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $link = $(this);
+            var cartItemKey = $link.data('cart_item_key');
+            if (!cartItemKey || typeof tmCartAjax === 'undefined') return;
+            $('.tm-mini-cart__content').addClass('tm-mini-cart-updating');
+            $.ajax({
+                url:  tmCartAjax.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action:       'tm_update_mini_cart_item',
+                    nonce:        tmCartAjax.nonce,
+                    cart_item_key: cartItemKey,
+                    qty:          0
+                },
+                success: function (res) {
+                    if (res.success && res.data) {
+                        if (typeof res.data.count !== 'undefined') {
+                            $('.tm-cart-count').attr('data-count', res.data.count).text(res.data.countHtml || '');
+                        }
+                        if (res.data.miniCartHtml) {
+                            $('.tm-mini-cart__content').html(res.data.miniCartHtml);
+                        }
+                    } else {
+                        window.location.href = $link.attr('href');
+                    }
+                },
+                error: function () {
+                    window.location.href = $link.attr('href');
+                },
+                complete: function () {
+                    $('.tm-mini-cart__content').removeClass('tm-mini-cart-updating');
+                }
+            });
+        });
+
         // Кнопки +/- в мини-корзине: вешаем на .tm-mini-cart, т.к. клик внутри не всплывает до document
         $miniCart.on('click', '.tm-cart-qty__btn', function (e) {
             e.preventDefault();
