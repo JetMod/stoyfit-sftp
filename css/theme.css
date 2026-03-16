@@ -15841,6 +15841,24 @@ div.wpcf7 .ajax-loader {
     color: #e52835;
 }
 
+/* Страница «Забыли пароль» (внутри Мой аккаунт) */
+.tm-lost-password-page {
+    max-width: 440px;
+    margin-top: 8px;
+}
+
+.tm-login-box--lost-password {
+    margin-bottom: 0;
+}
+
+.tm-lost-password-page .tm-form-row {
+    margin-bottom: 20px;
+}
+
+.tm-lost-password-page .tm-btn {
+    margin-top: 4px;
+}
+
 .tm-form-hint {
     font-size: 12px;
     color: #888;
