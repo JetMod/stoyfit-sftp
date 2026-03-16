@@ -24,12 +24,12 @@ do_action('woocommerce_before_cart');
             <table class="tm-cart-table shop_table shop_table_responsive cart woocommerce-cart-form__contents" cellspacing="0">
                 <thead>
                     <tr>
-                        <th class="product-remove"></th>
                         <th class="product-thumbnail"></th>
                         <th class="product-name">Товар</th>
                         <th class="product-price">Цена</th>
                         <th class="product-quantity">Количество</th>
                         <th class="product-subtotal">Сумма</th>
+                        <th class="product-remove"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,26 +46,6 @@ do_action('woocommerce_before_cart');
                         }
                     ?>
                     <tr class="woocommerce-cart-form__cart-item <?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
-
-                        <!-- Удалить -->
-                        <td class="product-remove">
-                            <?php
-                            echo apply_filters(
-                                'woocommerce_cart_item_remove_link',
-                                sprintf(
-                                    '<a href="%s" class="tm-cart-remove remove" aria-label="%s" data-product_id="%s" data-product_sku="%s" title="%s">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                    </a>',
-                                    esc_url(wc_get_cart_remove_url($cart_item_key)),
-                                    esc_attr__('Удалить этот товар', 'woocommerce'),
-                                    esc_attr($product_id),
-                                    esc_attr($_product->get_sku()),
-                                    esc_attr__('Удалить этот товар', 'woocommerce')
-                                ),
-                                $cart_item_key
-                            );
-                            ?>
-                        </td>
 
                         <!-- Изображение -->
                         <td class="product-thumbnail">
@@ -140,6 +120,26 @@ do_action('woocommerce_before_cart');
                         <!-- Подытог -->
                         <td class="product-subtotal" data-title="Сумма">
                             <?php echo apply_filters('woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal($_product, $cart_item['quantity']), $cart_item, $cart_item_key); ?>
+                        </td>
+
+                        <!-- Удалить -->
+                        <td class="product-remove">
+                            <?php
+                            echo apply_filters(
+                                'woocommerce_cart_item_remove_link',
+                                sprintf(
+                                    '<a href="%s" class="tm-cart-remove remove" aria-label="%s" data-product_id="%s" data-product_sku="%s" title="%s">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </a>',
+                                    esc_url(wc_get_cart_remove_url($cart_item_key)),
+                                    esc_attr__('Удалить этот товар', 'woocommerce'),
+                                    esc_attr($product_id),
+                                    esc_attr($_product->get_sku()),
+                                    esc_attr__('Удалить этот товар', 'woocommerce')
+                                ),
+                                $cart_item_key
+                            );
+                            ?>
                         </td>
 
                     </tr>
