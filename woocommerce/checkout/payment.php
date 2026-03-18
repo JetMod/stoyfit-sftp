@@ -67,6 +67,21 @@ if (!wp_doing_ajax()) {
 
     <div class="tm-checkout-place-order">
 
+        <?php
+        $terms_url = function_exists('tm_get_terms_url') ? tm_get_terms_url() : '';
+        $privacy_url = get_privacy_policy_url();
+        ?>
+        <div class="tm-checkout-consent-wrap">
+            <label class="tm-checkout-consent-checkbox<?php echo !empty($_POST['woocommerce_checkout_place_order']) && empty($_POST['tm_consent_checkout']) ? ' tm-form-checkbox--error' : ''; ?>">
+                <input type="checkbox" name="tm_consent_checkout" id="tm_consent_checkout" value="1" <?php checked(!empty($_POST['tm_consent_checkout'])); ?> required />
+                <span>Я принимаю <?php
+                echo $terms_url ? '<a href="' . esc_url($terms_url) . '" target="_blank" rel="noopener">условия пользовательского соглашения</a>' : 'условия пользовательского соглашения';
+                ?> и даю согласие на <?php
+                echo $privacy_url ? '<a href="' . esc_url($privacy_url) . '" target="_blank" rel="noopener">обработку персональных данных</a>' : 'обработку персональных данных';
+                ?> в соответствии с 152-ФЗ.</span>
+            </label>
+        </div>
+
         <noscript>
             <p><?php esc_html_e('Пожалуйста, включите JavaScript в браузере для оформления заказа.', 'woocommerce'); ?></p>
             <input type="submit" class="button alt" name="woocommerce_checkout_place_order" id="place_order_noscript" value="<?php echo esc_attr($order_button_text); ?>" />

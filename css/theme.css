@@ -16060,6 +16060,56 @@ div.wpcf7 .ajax-loader {
     line-height: 1.5;
 }
 
+.tm-form-consent {
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 16px;
+    line-height: 1.5;
+}
+
+.tm-form-consent a {
+    color: #e52835;
+    text-decoration: underline;
+}
+
+.tm-form-consent a:hover {
+    color: #9c000b;
+}
+
+.tm-form-row--consent {
+    margin-bottom: 20px;
+}
+
+.tm-form-checkbox--consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.tm-form-checkbox--consent input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 18px;
+    height: 18px;
+}
+
+.tm-form-checkbox--consent a {
+    color: #e52835;
+    text-decoration: underline;
+}
+
+.tm-form-checkbox--consent a:hover {
+    color: #9c000b;
+}
+
+.tm-form-checkbox--consent.tm-form-checkbox--error {
+    color: #e52835;
+}
+
 /* Кнопки */
 .tm-btn {
     display: inline-flex;
@@ -16733,14 +16783,34 @@ div.wpcf7 .ajax-loader {
     cursor: default;
 }
 
-/* Итоги корзины */
+/* Итоги корзины: слева — «Вас может заинтересовать», справа — сумма и кнопка */
 .tm-cart-collaterals {
-    max-width: 420px;
-    margin-left: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-start;
     margin-bottom: 20px;
 }
 
+.tm-cart-collaterals .cross-sells {
+    flex: 1;
+    min-width: 280px;
+    order: 1;
+}
+
+.tm-cart-collaterals .cross-sells h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #ebebeb;
+    color: #000;
+}
+
 .tm-cart-collaterals .cart_totals {
+    flex: 0 0 380px;
+    max-width: 420px;
+    order: 2;
     background: #f8f8f8;
     border: 1px solid #ebebeb;
     border-radius: 4px;
@@ -16918,6 +16988,14 @@ div.wpcf7 .ajax-loader {
     }
 
     .tm-cart-collaterals {
+        max-width: 100%;
+        flex-direction: column;
+    }
+
+    .tm-cart-collaterals .cross-sells,
+    .tm-cart-collaterals .cart_totals {
+        flex: 1 1 100%;
+        min-width: 100%;
         max-width: 100%;
     }
 
@@ -19149,6 +19227,40 @@ div.wpcf7 .ajax-loader {
     cursor: not-allowed;
 }
 
+.tm-checkout-consent-wrap {
+    margin-bottom: 16px;
+}
+
+.tm-checkout-consent-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.tm-checkout-consent-checkbox input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 18px;
+    height: 18px;
+}
+
+.tm-checkout-consent-checkbox a {
+    color: #e52835;
+    text-decoration: underline;
+}
+
+.tm-checkout-consent-checkbox a:hover {
+    color: #9c000b;
+}
+
+.tm-checkout-consent-checkbox.tm-form-checkbox--error {
+    color: #e52835;
+}
+
 /* Условия использования */
 .tm-checkout-place-order .woocommerce-terms-and-conditions-wrapper {
     font-size: 11px;
@@ -19422,15 +19534,15 @@ div.wpcf7 .ajax-loader {
     right: 0;
     z-index: 9999;
     padding: 16px 20px;
-    background: rgba(0, 0, 0, 0.92);
-    color: #fff;
+    background: #ebebeb;
+    color: #333;
     font-size: 14px;
     line-height: 1.5;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
     transform: translateY(100%);
     transition: transform 0.3s ease;
 }
-
+    
 .tm-cookie-banner--visible {
     transform: translateY(0);
 }

@@ -65,6 +65,16 @@ do_action('woocommerce_before_customer_login_form');
 
                     <?php do_action('woocommerce_login_form'); ?>
 
+                    <div class="tm-form-row tm-form-row--consent">
+                        <label class="tm-form-checkbox tm-form-checkbox--consent<?php echo !empty($_POST['login']) && empty($_POST['tm_consent_login']) ? ' tm-form-checkbox--error' : ''; ?>">
+                            <input type="checkbox" name="tm_consent_login" id="tm_consent_login" value="1" <?php checked(!empty($_POST['tm_consent_login'])); ?> required />
+                            <span>Я соглашаюсь с <?php
+                            $privacy_url = get_privacy_policy_url();
+                            echo $privacy_url ? '<a href="' . esc_url($privacy_url) . '" target="_blank" rel="noopener">политикой конфиденциальности</a>' : 'политикой конфиденциальности';
+                            ?>.</span>
+                        </label>
+                    </div>
+
                     <div class="tm-form-row tm-form-row--footer">
                         <label class="tm-form-checkbox">
                             <input type="checkbox" class="woocommerce-form__input-checkbox" name="rememberme" id="rememberme" value="forever" />
@@ -152,6 +162,19 @@ do_action('woocommerce_before_customer_login_form');
                     <?php endif; ?>
 
                     <?php do_action('woocommerce_register_form'); ?>
+
+                    <div class="tm-form-row tm-form-row--consent">
+                        <label class="tm-form-checkbox tm-form-checkbox--consent<?php echo !empty($_POST['register']) && empty($_POST['tm_consent_register']) ? ' tm-form-checkbox--error' : ''; ?>">
+                            <input type="checkbox" name="tm_consent_register" id="tm_consent_register" value="1" <?php checked(!empty($_POST['tm_consent_register'])); ?> required />
+                            <span>Я принимаю <?php
+                            $terms_url = function_exists('tm_get_terms_url') ? tm_get_terms_url() : '';
+                            $privacy_url = get_privacy_policy_url();
+                            echo $terms_url ? '<a href="' . esc_url($terms_url) . '" target="_blank" rel="noopener">условия пользовательского соглашения</a>' : 'условия пользовательского соглашения';
+                            ?> и даю согласие на <?php
+                            echo $privacy_url ? '<a href="' . esc_url($privacy_url) . '" target="_blank" rel="noopener">обработку персональных данных</a>' : 'обработку персональных данных';
+                            ?> в соответствии с 152-ФЗ.</span>
+                        </label>
+                    </div>
 
                     <?php wp_nonce_field('woocommerce-register', 'woocommerce-register-nonce'); ?>
 

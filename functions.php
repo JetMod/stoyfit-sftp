@@ -322,6 +322,53 @@ function dequeue_woocommerce_styles_scripts()
     }
 }
 
+// ── Согласие на обработку данных (152-ФЗ) ────────────────────────────────────
+// Ссылка на пользовательское соглашение (задайте ID страницы или URL)
+if (!function_exists('tm_get_terms_url')) {
+    function tm_get_terms_url()
+    {
+        $page_id = get_option('woocommerce_terms_page_id');
+        if ($page_id) {
+            return get_permalink($page_id);
+        }
+        return get_privacy_policy_url() ?: '';
+    }
+}
+
+// Валидация: галочка согласия при входе
+add_filter('woocommerce_process_login_errors', 'tm_validate_login_consent', 10, 3);
+function tm_validate_login_consent($validation_error, $username, $password)
+{
+    if (!empty($_POST['login']) && empty($_POST['tm_consent_login'])) {
+        if (is_wp_error($validation_error)) {
+            $validation_error->add('consent_required', __('Необходимо принять политику конфиденциальности.', 'woocommerce'));
+        } else {
+            $validation_error = new WP_Error('consent_required', __('Необходимо принять политику конфиденциальности.', 'woocommerce'));
+        }
+    }
+    return $validation_error;
+}
+
+// Валидация: галочка согласия при регистрации
+add_filter('woocommerce_process_registration_errors', 'tm_validate_registration_consent', 10, 4);
+function tm_validate_registration_consent($errors, $username, $password, $email)
+{
+    if (empty($_POST['tm_consent_register'])) {
+        $errors->add('consent_required', __('Необходимо принять условия пользовательского соглашения и дать согласие на обработку персональных данных.', 'woocommerce'));
+    }
+    return $errors;
+}
+
+// Валидация: галочка согласия при оформлении заказа
+add_action('woocommerce_checkout_process', 'tm_validate_checkout_consent');
+function tm_validate_checkout_consent()
+{
+    if (empty($_POST['tm_consent_checkout'])) {
+        wc_add_notice(__('Необходимо принять условия пользовательского соглашения и дать согласие на обработку персональных данных.', 'woocommerce'), 'error');
+    }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 // ── Чекаут: поля, лейблы, локализация ────────────────────────────────────────
 
 // Убираем лишние поля и русифицируем чекаут
@@ -1156,8 +1203,8 @@ function tm_cookie_consent_banner()
     }
     $privacy_url = get_privacy_policy_url();
     $privacy_link = $privacy_url
-        ? '<a href="' . esc_url($privacy_url) . '" class="tm-cookie-banner__link">политике конфиденциальности</a>'
-        : 'политике конфиденциальности';
+        ? '<a href="' . esc_url($privacy_url) . '" class="tm-cookie-banner__link">политикой конфиденциальности</a>'
+        : 'политикой конфиденциальности';
     ?>
     <div id="tm-cookie-banner" class="tm-cookie-banner" role="dialog" aria-label="Уведомление о cookies" aria-hidden="true">
         <div class="tm-cookie-banner__inner">
