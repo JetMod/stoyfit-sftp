@@ -185,7 +185,7 @@ include($this['path']->path('layouts:theme.config.php'));
 			 
 		
 			<div class="tm-centered-content" id="home-price-widget">
-				<?php the_field('home_price_widgets'); ?>
+				<?php echo do_shortcode(get_field('home_price_widgets')); ?>
 			</div>
 			
 			    <div class="tm-centered-content">

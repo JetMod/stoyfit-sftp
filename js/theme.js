@@ -592,6 +592,32 @@ jQuery(function ($) {
     });
     // ─────────────────────────────────────────────────────────────────────────
 
+    // ── Слайдер [application_products] — tm-application-goods из WooCommerce ───
+    document.querySelectorAll('.tm-application-slider').forEach(function (el) {
+        var prevEl = el.querySelector('.tm-application-slider__prev, .swiper-button-prev');
+        var nextEl = el.querySelector('.tm-application-slider__next, .swiper-button-next');
+        new Swiper(el, {
+            grabCursor:        true,
+            waitForTransition: false,
+            spaceBetween:      20,
+            navigation:        { prevEl: prevEl, nextEl: nextEl },
+            breakpoints: {
+                320:  { slidesPerView: 1.2 },
+                480:  { slidesPerView: 2 },
+                768:  { slidesPerView: 3 },
+                1180: { slidesPerView: 4 }
+            },
+            on: {
+                init: function (swiper) {
+                    if (swiper.slides.length <= swiper.params.slidesPerView) {
+                        el.classList.add('tm-application-slider--no-nav');
+                    }
+                }
+            }
+        });
+    });
+    // ─────────────────────────────────────────────────────────────────────────
+
     // ── Слайдер «Рекомендуем посмотреть» [featured_products_block] ───────────
     // Используем forEach чтобы каждый экземпляр на странице работал независимо
     document.querySelectorAll('.tm-featured-slider').forEach(function (el) {

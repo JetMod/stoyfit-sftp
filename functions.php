@@ -291,7 +291,7 @@ add_action('wp_enqueue_scripts', 'dequeue_woocommerce_styles_scripts', 99);
 function dequeue_woocommerce_styles_scripts()
 {
     if (function_exists('is_woocommerce')) {
-        if (!is_woocommerce() && !is_cart() && !is_checkout() && !is_account_page()) {
+        if (!is_woocommerce() && !is_cart() && !is_checkout() && !is_account_page() && !is_front_page()) {
             # Styles
             wp_dequeue_style('woocommerce-general');
             wp_dequeue_style('woocommerce-layout');
@@ -1005,6 +1005,43 @@ function tm_apply_product_filters($query)
 //   [featured_products_block ids="12,34,56" title="Хиты продаж" orderby="post__in"]
 //   [featured_products_block tag="sale" title="Акции" link="/shop/" link_text="Все акции"]
 //
+// ── Шорткод [application_products] — товары из WooCommerce в стиле tm-application-goods ──
+// Замена Widgetkit с ручным HTML. Товары и цены подтягиваются из каталога.
+// Примеры: [application_products ids="12,34,56" title="Детские площадки"]
+//          [application_products category="besshovnoe-pokrytie" limit="5" title="Бесшовные покрытия"]
+//          [application_products tag="kids" limit="8"]
+add_shortcode('application_products', 'tm_application_products_shortcode');
+function tm_application_products_shortcode($atts)
+{
+    if (is_admin() && !wp_doing_ajax()) {
+        return '';
+    }
+    if (!function_exists('wc_get_product')) {
+        return '';
+    }
+    $atts = shortcode_atts(
+        array(
+            'title'     => '',
+            'link'      => '',
+            'link_text' => 'Смотреть все',
+            'ids'       => '',
+            'category'  => '',
+            'tag'       => '',
+            'limit'     => 10,
+            'orderby'   => 'menu_order',
+            'order'     => 'ASC',
+            'class'     => '',
+        ),
+        $atts,
+        'application_products'
+    );
+    ob_start();
+    $args = $atts; // передаём параметры в шаблон
+    include get_template_directory() . '/template-parts/application-products.php';
+    return ob_get_clean();
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 add_shortcode('featured_products_block', 'tm_featured_products_shortcode');
 function tm_featured_products_shortcode($atts)
 {
@@ -1110,7 +1147,43 @@ function custom_price_html( $price, $product ){
     return apply_filters( 'woocommerce_get_price', $price );
 }
 
-
+// ── Всплывающее уведомление о cookies ─────────────────────────────────────────
+add_action('wp_footer', 'tm_cookie_consent_banner');
+function tm_cookie_consent_banner()
+{
+    if (is_admin()) {
+        return;
+    }
+    $privacy_url = get_privacy_policy_url();
+    $privacy_link = $privacy_url
+        ? '<a href="' . esc_url($privacy_url) . '" class="tm-cookie-banner__link">политике конфиденциальности</a>'
+        : 'политике конфиденциальности';
+    ?>
+    <div id="tm-cookie-banner" class="tm-cookie-banner" role="dialog" aria-label="Уведомление о cookies" aria-hidden="true">
+        <div class="tm-cookie-banner__inner">
+            <p class="tm-cookie-banner__text">
+                Мы используем файлы cookie для улучшения работы сайта и анализа трафика. Продолжая использовать сайт, вы соглашаетесь с нашей <?php echo $privacy_link; ?>.
+            </p>
+            <button type="button" class="tm-cookie-banner__btn" id="tm-cookie-accept" aria-label="Принять">Принять</button>
+        </div>
+    </div>
+    <script>
+    (function() {
+        var key = 'tm_cookie_consent';
+        if (localStorage.getItem(key) === 'accepted') return;
+        var banner = document.getElementById('tm-cookie-banner');
+        if (!banner) return;
+        banner.classList.add('tm-cookie-banner--visible');
+        banner.setAttribute('aria-hidden', 'false');
+        document.getElementById('tm-cookie-accept').addEventListener('click', function() {
+            localStorage.setItem(key, 'accepted');
+            banner.classList.remove('tm-cookie-banner--visible');
+            banner.setAttribute('aria-hidden', 'true');
+        });
+    })();
+    </script>
+    <?php
+}
 
 
 
