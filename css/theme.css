@@ -1982,7 +1982,7 @@ strong {
     line-height: 42px;
     font-weight: 700;
     text-transform: none;
-    margin-bottom: 50px;
+    /* margin-bottom: 20px; */
 }
 
 .uk-article-title a {
@@ -10873,6 +10873,13 @@ html {
         flex-wrap: wrap;
     }
 
+.uk-flex-middle{
+    position: relative;
+    top: 25px;
+    z-index: 2;
+    left: -5px;
+}
+
     .tm-headerbar .tm-logo,
     .tm-headerbar .headerhour {
         width: 100%;
@@ -16327,6 +16334,190 @@ div.wpcf7 .ajax-loader {
     }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Страница «Адреса» — Платёжный адрес и Адрес доставки
+   ========================================================================== */
+
+.tm-my-account .woocommerce-address-fields__field-wrapper,
+.tm-my-account .woocommerce-billing-fields__field-wrapper,
+.tm-my-account .woocommerce-shipping-fields__field-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+}
+
+.tm-my-account .woocommerce-address-fields .form-row,
+.tm-my-account .woocommerce-billing-fields .form-row,
+.tm-my-account .woocommerce-shipping-fields .form-row {
+    margin-bottom: 20px;
+}
+
+.tm-my-account .woocommerce-address-fields .form-row-first,
+.tm-my-account .woocommerce-billing-fields .form-row-first,
+.tm-my-account .woocommerce-shipping-fields .form-row-first,
+.tm-my-account .woocommerce-address-fields .form-row-last,
+.tm-my-account .woocommerce-billing-fields .form-row-last,
+.tm-my-account .woocommerce-shipping-fields .form-row-last {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 140px;
+}
+
+.tm-my-account .woocommerce-address-fields .form-row-wide,
+.tm-my-account .woocommerce-billing-fields .form-row-wide,
+.tm-my-account .woocommerce-shipping-fields .form-row-wide {
+    flex: 1 1 100%;
+}
+
+.tm-my-account .woocommerce-address-fields label,
+.tm-my-account .woocommerce-billing-fields label,
+.tm-my-account .woocommerce-shipping-fields label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.tm-my-account .woocommerce-address-fields label .required,
+.tm-my-account .woocommerce-billing-fields label .required,
+.tm-my-account .woocommerce-shipping-fields label .required {
+    color: #e52835;
+    margin-left: 2px;
+}
+
+.tm-my-account .woocommerce-address-fields label .optional,
+.tm-my-account .woocommerce-billing-fields label .optional,
+.tm-my-account .woocommerce-shipping-fields label .optional {
+    font-weight: 400;
+    color: #999;
+    font-size: 11px;
+}
+
+.tm-my-account .woocommerce-address-fields input[type="text"],
+.tm-my-account .woocommerce-address-fields input[type="email"],
+.tm-my-account .woocommerce-address-fields input[type="tel"],
+.tm-my-account .woocommerce-address-fields select,
+.tm-my-account .woocommerce-billing-fields input[type="text"],
+.tm-my-account .woocommerce-billing-fields input[type="email"],
+.tm-my-account .woocommerce-billing-fields input[type="tel"],
+.tm-my-account .woocommerce-billing-fields select,
+.tm-my-account .woocommerce-shipping-fields input[type="text"],
+.tm-my-account .woocommerce-shipping-fields input[type="email"],
+.tm-my-account .woocommerce-shipping-fields input[type="tel"],
+.tm-my-account .woocommerce-shipping-fields select {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: #000;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+}
+
+.tm-my-account .woocommerce-address-fields input:not([type="hidden"]),
+.tm-my-account .woocommerce-billing-fields input:not([type="hidden"]),
+.tm-my-account .woocommerce-shipping-fields input:not([type="hidden"]) {
+    background-image: none;
+}
+
+.tm-my-account .woocommerce-address-fields select,
+.tm-my-account .woocommerce-billing-fields select,
+.tm-my-account .woocommerce-shipping-fields select {
+    padding-right: 36px;
+}
+
+.tm-my-account .woocommerce-address-fields input:focus,
+.tm-my-account .woocommerce-address-fields select:focus,
+.tm-my-account .woocommerce-billing-fields input:focus,
+.tm-my-account .woocommerce-billing-fields select:focus,
+.tm-my-account .woocommerce-shipping-fields input:focus,
+.tm-my-account .woocommerce-shipping-fields select:focus {
+    border-color: #e52835;
+    box-shadow: 0 0 0 3px rgba(229, 40, 53, 0.08);
+}
+
+.tm-my-account .woocommerce-address-fields .woocommerce-invalid input,
+.tm-my-account .woocommerce-billing-fields .woocommerce-invalid input,
+.tm-my-account .woocommerce-shipping-fields .woocommerce-invalid input {
+    border-color: #e52835;
+}
+
+.tm-my-account .woocommerce-address-fields__title,
+.tm-my-account .woocommerce-billing-fields h3,
+.tm-my-account .woocommerce-shipping-fields h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.tm-my-account .woocommerce-address-fields__field-wrapper,
+.tm-my-account .woocommerce-billing-fields__field-wrapper,
+.tm-my-account .woocommerce-shipping-fields__field-wrapper {
+    margin-top: 0;
+}
+
+.tm-my-account .woocommerce-address-fields,
+.tm-my-account .woocommerce-billing-fields,
+.tm-my-account .woocommerce-shipping-fields {
+    background: #f8f8f8;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+}
+
+.tm-my-account .woocommerce-address-fields .button,
+.tm-my-account .woocommerce-billing-fields .button,
+.tm-my-account .woocommerce-shipping-fields .button {
+    display: inline-block;
+    padding: 12px 28px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: #e52835;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+}
+
+.tm-my-account .woocommerce-address-fields .button:hover,
+.tm-my-account .woocommerce-billing-fields .button:hover,
+.tm-my-account .woocommerce-shipping-fields .button:hover {
+    background: #c41e2a;
+}
+
+@media (max-width: 767px) {
+    .tm-my-account .woocommerce-address-fields,
+    .tm-my-account .woocommerce-billing-fields,
+    .tm-my-account .woocommerce-shipping-fields {
+        padding: 20px;
+    }
+
+    .tm-my-account .woocommerce-address-fields .form-row-first,
+    .tm-my-account .woocommerce-address-fields .form-row-last,
+    .tm-my-account .woocommerce-billing-fields .form-row-first,
+    .tm-my-account .woocommerce-billing-fields .form-row-last,
+    .tm-my-account .woocommerce-shipping-fields .form-row-first,
+    .tm-my-account .woocommerce-shipping-fields .form-row-last {
+        flex: 1 1 100%;
+    }
+}
+
 /* Мобильная адаптация аккаунта */
 @media (max-width: 767px) {
     .tm-login-box {
@@ -19680,4 +19871,19 @@ div.wpcf7 .ajax-loader {
     display: flex;
     flex-direction: column;
     gap: 5px;
+}
+
+/* Исправление вложенных media — вынесено на верхний уровень */
+@media (max-width: 767px) {
+    .uk-grid {
+        gap: 20px;
+    }
+    .uk-article-title,
+    .woocommerce-products-header__title,
+    .single-product-title h1 {
+        margin-bottom: 0;
+    }
+    .tm-login-page {
+        padding: 0;
+    }
 }
