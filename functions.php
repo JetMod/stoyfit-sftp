@@ -193,6 +193,13 @@ function tm_add_to_cart_redirect_with_param($redirect_url)
     return add_query_arg('added_to_cart', '1', $redirect_url);
 }
 
+// Скрыть стандартное уведомление WooCommerce «Вы отложили X × "..." в свою корзину» — используем свою всплывашку
+add_filter('woocommerce_add_to_cart_message', 'tm_remove_add_to_cart_notice');
+function tm_remove_add_to_cart_notice($message)
+{
+    return '';
+}
+
 // выводим класс body категории товара в карточке товара
 add_filter('body_class', 'new_prodcats');
 

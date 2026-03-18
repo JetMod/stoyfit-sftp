@@ -27,6 +27,19 @@ jQuery(function ($) {
             }
         });
 
+        function handleCloseCartClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeCart();
+        }
+
+        $miniCart.on('click', '.tm-mini-cart__close', handleCloseCartClick);
+        $miniCart.on('touchend', '.tm-mini-cart__close', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeCart();
+        });
+
         // Клик внутри мини-корзины не закрывает её
         $miniCart.on('click', function (e) {
             e.stopPropagation();
