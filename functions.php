@@ -544,6 +544,57 @@ function tm_ajax_update_cart()
     ));
 }
 
+// AJAX: добавление товара в корзину со страницы товара (без перезагрузки)
+add_action('wp_ajax_tm_add_to_cart', 'tm_ajax_add_to_cart');
+add_action('wp_ajax_nopriv_tm_add_to_cart', 'tm_ajax_add_to_cart');
+function tm_ajax_add_to_cart()
+{
+    check_ajax_referer('tm_cart_update', 'nonce');
+    if (!function_exists('WC') || !WC()->cart) {
+        wp_send_json_error(array('message' => 'Корзина недоступна'));
+    }
+    $product_id   = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+    $quantity     = isset($_POST['quantity']) ? wc_stock_amount(wp_unslash($_POST['quantity'])) : 1;
+    $variation_id = isset($_POST['variation_id']) ? absint($_POST['variation_id']) : 0;
+    $variation    = array();
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, 'attribute_') === 0) {
+            $variation[ $key ] = sanitize_text_field(wp_unslash($value));
+        }
+    }
+    if (!$product_id) {
+        wp_send_json_error(array('message' => 'Товар не указан'));
+    }
+    $product = wc_get_product($product_id);
+    if (!$product || !$product->exists()) {
+        wp_send_json_error(array('message' => 'Товар не найден'));
+    }
+    if (!$product->is_purchasable()) {
+        wp_send_json_error(array('message' => 'Товар недоступен для заказа'));
+    }
+    if ($product->is_type('variable') && !$variation_id) {
+        wp_send_json_error(array('message' => 'Выберите вариант товара'));
+    }
+    $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $variation);
+    if ($cart_item_key === false) {
+        $errors = wc_get_notices('error');
+        $msg    = 'Не удалось добавить товар в корзину';
+        if (!empty($errors) && isset($errors[0]['notice'])) {
+            $msg = strip_tags($errors[0]['notice']);
+        }
+        wp_send_json_error(array('message' => $msg));
+    }
+    $count = WC()->cart->get_cart_contents_count();
+    ob_start();
+    woocommerce_mini_cart();
+    $mini_cart = ob_get_clean();
+    wp_send_json_success(array(
+        'count'        => $count,
+        'countHtml'    => $count > 0 ? (string) $count : '',
+        'miniCartHtml' => $mini_cart,
+    ));
+}
+
 // AJAX: изменение количества одного товара в мини-корзине (+/-)
 add_action('wp_ajax_tm_update_mini_cart_item', 'tm_ajax_update_mini_cart_item');
 add_action('wp_ajax_nopriv_tm_update_mini_cart_item', 'tm_ajax_update_mini_cart_item');

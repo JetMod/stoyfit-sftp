@@ -174,6 +174,59 @@ jQuery(function ($) {
                 setTimeout(showAddedToCartToast, 150);
             }
         })();
+
+        // Страница товара: AJAX-добавление в корзину без перезагрузки
+        $(document).on('submit', 'form.cart:has(.single_add_to_cart_button)', function (e) {
+            if (typeof tmCartAjax === 'undefined') return;
+            var $form   = $(this);
+            var $variationForm = $form.closest('.variations_form');
+            if ($variationForm.length && (!$variationForm.find('.variation_id').length || $variationForm.find('.variation_id').val() === '0' || $variationForm.find('.variation_id').val() === '')) {
+                return;
+            }
+            e.preventDefault();
+            var $btn = $form.find('.single_add_to_cart_button');
+            if ($btn.hasClass('loading')) return;
+            $btn.addClass('loading');
+            var data = {
+                action:   'tm_add_to_cart',
+                nonce:    tmCartAjax.nonce,
+                quantity: $form.find('input.qty').val() || 1,
+                product_id: $form.find('[name="add-to-cart"]').val() || $form.find('[name="product_id"]').val()
+            };
+            var $varId = $form.find('input.variation_id');
+            if ($varId.length && $varId.val()) {
+                data.variation_id = $varId.val();
+            }
+            $form.find('[name^="attribute_"]').each(function () {
+                data[$(this).attr('name')] = $(this).val();
+            });
+            $.ajax({
+                url:  tmCartAjax.ajaxUrl,
+                type: 'POST',
+                data: data,
+                success: function (res) {
+                    if (res.success && res.data) {
+                        $('.tm-cart-count').attr('data-count', res.data.count).text(res.data.countHtml || '');
+                        if (res.data.miniCartHtml) {
+                            $('.tm-mini-cart__content').html(res.data.miniCartHtml);
+                        }
+                        $(document.body).trigger('added_to_cart');
+                    } else {
+                        if (res.data && res.data.message) {
+                            alert(res.data.message);
+                        } else {
+                            $form[0].submit();
+                        }
+                    }
+                },
+                error: function () {
+                    $form[0].submit();
+                },
+                complete: function () {
+                    $btn.removeClass('loading');
+                }
+            });
+        });
         // ─────────────────────────────────────────────────────────────────────
 
         // ── Дропдаун аккаунта ─────────────────────────────────────────────────
